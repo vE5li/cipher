@@ -1,0 +1,16 @@
+#method {
+
+    resolve {
+
+        block [ [ #single self ]
+            #pass           [ #scope:self:block ] [ #scope:self:public ]
+            #return         [ #scope:self ]
+        ]
+
+        module [ [ #single self ] [ #single public [ boolean ] ]
+            #compile_module [ #context:#compiler ] [ #scope:self:name ]
+            #set            [ #data data ] [ #last ]
+            #return         [ #scope:self ]
+        ]
+    }
+}

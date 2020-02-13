@@ -1,0 +1,24 @@
+#method {
+
+    #note [ [ #single flag [ identifier ] ] [ #single message [ string ] ]
+        #call           [ #method:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #set            [ #data module ] [ #last ]
+        #call           [ #method:format:tag ] [ #root:color:yellow ] [ #scope:flag ]
+        #print_line     [ #scope:module ] [ #data " " ] [ #last ] [ #data " " ] [ #scope:message ]
+    ]
+
+    #tokenize [
+        #call           [ #method:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #print_line     [ #last ] [ #data " tokenizing..." ]
+    ]
+
+    #parse [
+        #call           [ #method:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #print_line     [ #last ] [ #data " parsing..." ]
+    ]
+
+    #build [
+        #call           [ #method:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #print_line     [ #last ] [ #data " building..." ]
+    ]
+}

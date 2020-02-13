@@ -1,0 +1,420 @@
+#template {
+
+    immediate [
+        [ [ #keyword  [ false    ] ]                           [ #data      boolean   !false ] ]
+        [ [ #keyword  [ true     ] ]                           [ #data      boolean   !true  ] ]
+        [                                                      [ #character character        ] ]
+        [                                                      [ #string    string           ] ]
+        [ [ #operator [ subtract ] ] [ #data negative !true  ] [ #integer   integer          ] ]
+        [                            [ #data negative !false ] [ #integer   integer          ] ]
+        [ [ #operator [ subtract ] ] [ #data negative !true  ] [ #float     float            ] ]
+        [                            [ #data negative !false ] [ #float     float            ] ]
+    ]
+
+    operator [
+        [ [ #operator [ bigger  ] ] [ #operator [ bigger  ] ] [ #data     operator   shift_left    ] ]
+        [ [ #operator [ smaller ] ] [ #operator [ smaller ] ] [ #data     operator   shift_right   ] ]
+        [                                                     [ #operator operator [ bigger      ] ] ]
+        [                                                     [ #operator operator [ smaller     ] ] ]
+        [                                                     [ #operator operator [ add         ] ] ]
+        [                                                     [ #operator operator [ subtract    ] ] ]
+        [                                                     [ #operator operator [ divide      ] ] ]
+        [                                                     [ #operator operator [ multiply    ] ] ]
+        [                                                     [ #operator operator [ and         ] ] ]
+        [                                                     [ #operator operator [ or          ] ] ]
+        [                                                     [ #operator operator [ xor         ] ] ]
+    ]
+
+    reassignment_operator [
+        [ [ #operator operator [ assign          ] ] ]
+        [ [ #operator operator [ add_assign      ] ] ]
+        [ [ #operator operator [ subtract_assign ] ] ]
+        [ [ #operator operator [ divide_assign   ] ] ]
+        [ [ #operator operator [ multiply_assign ] ] ]
+        [ [ #operator operator [ and_assign      ] ] ]
+        [ [ #operator operator [ or_assign       ] ] ]
+        [ [ #operator operator [ xor_assign      ] ] ]
+    ]
+
+    logical_operator [
+        [ [ #operator operator [ logical_and ] ] ]
+        [ [ #operator operator [ logical_or  ] ] ]
+        [ [ #operator operator [ identical   ] ] ]
+        [ [ #operator operator [ differ      ] ] ]
+    ]
+
+    mutablity [
+        [ [ #keyword [ mutable ] ] [ #data mutablity mutable ] ]
+        [ [ #keyword [ final   ] ] [ #data mutablity final   ] ]
+        [ [ #keyword [ implied ] ] [ #data mutablity implied ] ]
+    ]
+
+    parameter [
+        [ [ #merge [ mutablity ] ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] [ #operator [ assign ] ] [ #template default [ instance ] ] ]
+        [                          [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] [ #operator [ assign ] ] [ #template default [ instance ] ] ]
+        [ [ #merge [ mutablity ] ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ]                                                             ]
+        [                          [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ]                                                             ]
+        [ [ #merge [ mutablity ] ] [ #identifier name ]                                                     [ #operator [ assign ] ] [ #template default [ instance ] ] ]
+        [                          [ #identifier name ]                                                     [ #operator [ assign ] ] [ #template default [ instance ] ] ]
+    ]
+
+    self_parameter [
+        [ [ #template [ mutablity ] ] [ #keyword [ self ] ] ]
+        [ [ #operator [ image     ] ] [ #keyword [ self ] ] ]
+        [ [ #operator [ and       ] ] [ #keyword [ self ] ] ]
+        [                             [ #keyword [ self ] ] ]
+    ]
+
+    parameter_list [
+        [ [ #operator [ open_round ] ] [ #template [ self_parameter ] ] [ #operator [ comma ] ] [ #list parameters [ #template [ parameter ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #operator [ open_round ] ] [ #template [ self_parameter ] ]                                                                                                  [ #operator [ close_round ] ] ]
+        [ [ #operator [ open_round ] ]                                                          [ #list parameters [ #template [ parameter ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #operator [ open_round ] ]                                                                                                                                   [ #operator [ close_round ] ] ]
+    ]
+
+    method_start [
+        [ [ #type_identifier [ Method ] ] [ #merge [ template_list ] ] [ #merge [ parameter_list ] ] ]
+    ]
+
+    method_appearance [ @ { resolve [ resolve:method_appearance ] }
+        [ [ #merge [ method_start ] ] [ #operator [ case ] ] [ #keyword              [ not  ] ] [ #data returns !false ] ]
+        [ [ #merge [ method_start ] ] [ #operator [ case ] ] [ #template return_type [ type ] ]                          ]
+        [ [ #merge [ method_start ] ]                                                                                    ]
+    ]
+
+    redirect [
+        [ [ #type_identifier type_identifier         ] [ #merge [ subtype_list ] ] [ #operator [ contains ] ] ]
+        [ [ #identifier      identifier              ]                             [ #operator [ contains ] ] ]
+    ]
+
+    redirection [
+        [ [ #keyword [ any ] ] [ #merge [ subtype_list ] ] [ #operator [ contains ] ] [ #list [ #template [ redirect ] ] ] ]
+        [ [ #keyword [ any ] ] [ #merge [ subtype_list ] ] [ #operator [ contains ] ]                                      ]
+        [                                                                             [ #list [ #template [ redirect ] ] ] ]
+        [                                                                                                                  ]
+    ]
+
+    real_type [ @{ resolve [ resolve:real_type ] }
+        [ [ #template method      [ method_appearance ] ]                                                                                                                                       ]
+        [ [ #operator             [ open_round        ] ]                                      [ #list     tuple [ #template [ type ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #merge                [ redirection       ] ] [ #type_identifier type_identifier ] [ #merge          [ subtype_list                               ] ]                               ]
+        [ [ #keyword  type        [ any               ] ]                                      [ #merge          [ subtype_list                               ] ]                               ]
+    ]
+
+    field [
+        [ [ #keyword [ public ] ] [ #data public !true  ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
+        [                         [ #data public !false ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
+    ]
+
+    field_list [
+        [ [ #operator [ open_curly ] ] [ #list field [ #template [ field ] ] ] [ #operator [ close_curly ] ] ]
+        [ [ #operator [ open_curly ] ]                                         [ #operator [ close_curly ] ] ]
+    ]
+
+    structure [ @ { resolve [ resolve:structure ] } @macro
+        [ [ #keyword [ structure ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ assign     ] ] [ #template type [ real_type ] ] ]
+        [ [ #keyword [ structure ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #merge    [ field_list ] ]                                  ]
+    ]
+
+    variant [
+        [ [ #type_identifier name ] [ #operator [ open_round ] ] [ #list [ #template [ type ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #type_identifier name ]                                                                                                                     ]
+    ]
+
+    variant_list [
+        [ [ #operator [ open_curly ] ] [ #list variants [ #template [ variant ] ] ] [ #operator [ close_curly ] ] ]
+        [ [ #operator [ open_curly ] ]                                              [ #operator [ close_curly ] ] ]
+    ]
+
+    enumeration [ @macro
+        [ [ #keyword [ enumeration ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ assign       ] ] [ #template type [ real_type ] ] ]
+        [ [ #keyword [ enumeration ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #merge    [ variant_list ] ]                                  ]
+    ]
+
+    implementable [ @macro
+        [ [ #keyword [ public ] ] [ #data public !true  ] [ #template [ assign ] ] ]
+        [                         [ #data public !false ] [ #template [ assign ] ] ]
+    ]
+
+    while [
+        [ [ #keyword [ while ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ] ]
+    ]
+
+    loop [
+        [ [ #keyword [ loop ] ] [ #template scope [ scope ] ] ]
+    ]
+
+    if [
+        [ [ #keyword [ if ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ] [ #list [ #template [ or ] ] ] ]
+        [ [ #keyword [ if ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ]                                ]
+    ]
+
+    or [
+        [ [ #keyword [ or ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ] ]
+        [ [ #keyword [ or ] ]                                                                                           [ #template scope [ scope ] ] ]
+    ]
+
+    @ TODO tuples + reverse iterate
+    iterate [
+        [ [ #keyword [ iterate ] ] [ #template [ range    ] ] [ #keyword [ as ] ] [ #identifier iterator ] [ #template [ scope ] ] ]
+        [ [ #keyword [ iterate ] ] [ #template [ range    ] ]                                              [ #template [ scope ] ] ]
+        [ [ #keyword [ iterate ] ] [ #template [ instance ] ] [ #keyword [ as ] ] [ #identifier iterator ] [ #template [ scope ] ] ]
+        [ [ #keyword [ iterate ] ] [ #template [ instance ] ]                                              [ #template [ scope ] ] ]
+    ]
+
+    trait [
+        [ [ #keyword [ trait ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ open_curly ] ] [ #list [ #template [ field ] ] ] [ #operator [ close_curly ] ] ]
+    ]
+
+    implement_list [
+        [ [ #operator [ open_curly ] ] [ #list [ #template [ implementable ] ] ] [ #operator [ close_curly ] ] ]
+        [ [ #operator [ open_curly ] ]                                           [ #operator [ close_curly ] ] ]
+    ]
+
+    implement_selector [
+        [ [ #keyword [ implement ] ] [ #merge [ template_list ] ] [ #type_identifier trait ] [ #merge [ subtype_list ] ] [ #keyword [ for ] ] [ #template type [ real_type ] ] ]
+        [ [ #keyword [ implement ] ] [ #merge [ template_list ] ] [ #type_identifier trait ]                             [ #keyword [ for ] ] [ #template type [ real_type ] ] ]
+        [ [ #keyword [ implement ] ] [ #merge [ template_list ] ]                                                                             [ #template type [ real_type ] ] ]
+    ]
+
+    implement [
+        [ [ #template [ implement_selector ] ] [ #merge [ template_list ] ] [ #merge [ implement_list ] ] ]
+    ]
+
+    alias [
+        [ [ #keyword [ alias ] ] [ #type_identifier alias ] [ #merge [ template_list ] ] [ #operator [ assign ] ] [ #template type [ real_type ] ] ]
+    ]
+
+    type [ @[ resolve:type ]
+        [ [ #operator [ and   ] ] [ #data instance_type [ mirror ] ] [ #template real_type [ real_type ] ] ]
+        [ [ #operator [ image ] ] [ #data instance_type [ image  ] ] [ #template real_type [ real_type ] ] ]
+        [                         [ #data instance_type [ real   ] ] [ #template real_type [ real_type ] ] ]
+    ]
+
+    subtype_list [
+        [ [ #operator [ smaller ] ] [ #list subtype [ #template [ type ] ] [ #operator [ comma ] ] ] [ #operator [ bigger ] ] ]
+        [                                                                                                                     ]
+    ]
+
+    template_list [
+        [ [ #operator [ smaller ] ] [ #list subtype [ #type_identifier ] [ #operator [ comma ] ] ] [ #operator [ bigger ] ] ]
+        [                                                                                                                   ]
+    ]
+
+    label [
+        [ [ #keyword [ label ] ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
+        [ [ #keyword [ label ] ] [ #identifier name ]                                                     ]
+    ]
+
+    assign [ @[ resolve:assign ]
+        [ [ #template [ label ] ] [ #operator [ assign ] ] [ #template instance [ instance ] ] ]
+    ]
+
+    reassign [@ [ resolve:assign ]
+        [ [ #template destination [ instance ] ] [ #template [ reassignment_operator ] ] [ #template instance [ instance ] ] ]
+    ]
+
+    range [
+        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ] [ #template end [ instance ] ] ]
+        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ] [ #template end [ instance ] ] ]
+        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ]                                ]
+        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ]                                ]
+        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ]                       [ #data inclusive !false ] [ #template end [ instance ] ] ]
+        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ]                       [ #data inclusive !false ] [ #template end [ instance ] ] ]
+    ]
+
+    module [ { resolve [ resolve:module ] }
+        [ [ #keyword [ module ] ] [ #identifier name ] ]
+    ]
+
+    key [
+        [ [ #type_identifier type_identifier ] ]
+        [ [ #identifier      identifier      ] ]
+    ]
+
+    @ TODO tuples
+    if_case [
+        [ [ #type_identifier variant ] [ #operator [ colon ] ] [ #list [ #identifier ] [ #operator [ comma ] ] ] [ #operator [ identical ] ] [ #template [ instance ] ] ]
+        [ [ #type_identifier variant ]                                                                           [ #operator [ identical ] ] [ #template [ instance ] ] ]
+        [ [ #type_identifier variant ]                                                                           [ #operator [ differ    ] ] [ #template [ instance ] ] ]
+    ]
+
+    condition_piece [
+        [ [ #operator [ open_square ] ] [ #list     [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #operator [ close_square ] ] ]
+        [ [ #operator [ call        ] ] [ #template [ condition_piece                                                  ] ]                                ]
+        [ [ #template [ instance    ] ]                                                                                                                   ]
+        [ [ #template [ if_case     ] ]                                                                                                                   ]
+    ]
+
+    formula_piece [
+        [ [ #operator [ open_square ] ] [ #list     [ #template [ formula_piece ] ] [ #template [ operator ] ] ] [ #operator [ close_square ] ] ]
+        [ [ #operator [ flip        ] ] [ #template [ instance                                               ] ]                                ]
+        [ [ #template [ instance    ] ]                                                                                                         ]
+    ]
+
+    call [
+        [ [ #template instance [ instance ] ] [ #operator [ call ] ] [ #operator [ open_round ] ] [ #list parameter [ #template [ instance ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #template instance [ instance ] ] [ #operator [ call ] ] [ #operator [ open_round ] ]                                                                        [ #operator [ close_round ] ] ]
+    ]
+
+    new_variant [
+        [ [ #merge [ redirection ] ] [ #type_identifier type_identifier ] [ #operator [ open_round ] ] [ #list inner [ #template [ instance ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #merge [ redirection ] ] [ #type_identifier type_identifier ] [ #operator [ open_round ] ]                                                                    [ #operator [ close_round ] ] ]
+        [ [ #merge [ redirection ] ] [ #type_identifier type_identifier ]                                                                                                                               ]
+    ]
+
+    instance [ @ { resolve [ resolve:instance ] } @macro
+        [ [ #template   collection  [ instance                    ] ] [ #operator              [ open_square                                    ] ] [ #template   range [ range       ] ] [ #operator [ close_square ] ] ]
+        [ [ #template   collection  [ instance                    ] ] [ #operator              [ open_square                                    ] ] [ #template   index [ instance    ] ] [ #operator [ close_square ] ] ]
+        [ [ #operator               [ open_round                  ] ] [ #list       tuple      [ #template [ instance ] ] [ #operator [ comma ] ] ] [ #operator         [ close_round ] ]                                ]
+        [ [ #template   immediate   [ immediate                   ] ]                                                                                                                                                    ]
+        [ [ #template   mutablity   [ mutablity                   ] ] [ #template   instance   [ instance                                       ] ]                                                                      ]
+        [ [ #template   new_variant [ new_variant                 ] ]                                                                                                                                                    ]
+        [ [ #template   scope       [ scope                       ] ]                                                                                                                                                    ]
+        [ [ #template   call        [ call                        ] ]                                                                                                                                                    ]
+        [ [ #template   instance    [ instance                    ] ] [ #operator              [ dot                                            ] ] [ #identifier key                   ]                                ]
+        [ [ #template   instance    [ instance                    ] ] [ #operator              [ dot                                            ] ] [ #integer    integer               ]                                ]
+        [ [ #operator               [ and                         ] ] [ #template   mirror     [ instance                                       ] ]                                                                      ]
+        [ [ #operator               [ image                       ] ] [ #template   image      [ instance                                       ] ]                                                                      ]
+        [ [ #merge                  [ redirection                 ] ] [ #identifier identifier                                                    ]                                                                      ]
+        [ [ #template   macro       [ macro                       ] ]                                                                                                                                                    ]
+        [ [ #template   match       [ match                       ] ]                                                                                                                                                    ]
+        [ [ #template   if          [ if                          ] ]                                                                                                                                                    ]
+        [ [ #template   while       [ while                       ] ]                                                                                                                                                    ]
+        [ [ #template   loop        [ loop                        ] ]                                                                                                                                                    ]
+        [ [ #template   iterate     [ iterate                     ] ]                                                                                                                                                    ]
+        [ [ #confirmed  parameters  [ #template [ formula_piece   ] ] [ #template              [ operator           ] ] ] ]
+        [ [ #confirmed  parameters  [ #template [ condition_piece ] ] [ #template              [ logical_operator   ] ] ] ]
+    ]
+
+    collect [
+        [ [ #keyword [ collect ] ] [ #template [ instance ] ] ]
+    ]
+
+    path [
+        [ [ #list path [ #template [ key ] ] [ #operator [ contains ] ] ] [ #operator [ contains ] ] [ #operator             [ open_round ] ] [ #list next [ #template [ path ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #list path [ #template [ key ] ] [ #operator [ contains ] ] ] [ #keyword  [ as       ] ] [ #template alternative [ key        ] ]                                                                                             ]
+        [ [ #list path [ #template [ key ] ] [ #operator [ contains ] ] ] [ #operator [ contains ] ] [ #keyword  any         [ any        ] ]                                                                                             ]
+        [ [ #list path [ #template [ key ] ] [ #operator [ contains ] ] ]                                                                                                                                                                 ]
+    ]
+
+    import [
+        [ [ #keyword [ import ] ] [ #template path [ path ] ] ]
+    ]
+
+    export [
+        [ [ #keyword [ export ] ] [ #operator      [ open_round ] ] [ #list next [ #template [ path ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #keyword [ export ] ] [ #template path [ path       ] ]                                                                                             ]
+    ]
+
+    @ TODO tuples
+    case [
+        [ [ #keyword [ case ] ] [ #type_identifier variant               ] [ #operator [ colon ] ] [ #list                  [ #identifier ] [ #operator [ comma ] ] ] ]
+        [ [ #keyword [ case ] ] [ #type_identifier variant               ]                                                                                            ]
+        [ [ #keyword [ case ] ] [ #keyword         variant  [ any      ] ] [ #operator [ colon ] ] [ #identifier identifier                                         ] ]
+        [ [ #keyword [ case ] ] [ #keyword         variant  [ any      ] ]                                                                                            ]
+        [ [ #keyword [ case ] ] [ #template        instance [ instance ] ]                                                                                            ]
+        [ [ #keyword [ case ] ] [ #template        range    [ range    ] ]                                                                                            ]
+    ]
+
+    arm [
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ scope     ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ call      ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ macro     ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ reassign  ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ terminate ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ return    ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ continue  ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ break     ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ match     ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ pass      ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ collect   ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ if        ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ while     ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ loop      ] ] ]
+        [ [ #list cases [ #template [ case ] ] [ #operator [ or ] ] ] [ #operator [ case ] ] [ #template [ iterate   ] ] ]
+    ]
+
+    match [
+        [ [ #keyword [ match ] ] [ #template instance [ instance ] ] [ #operator [ open_curly ] ] [ #list [ #template [ arm ] ] ] [ #operator [ close_curly ] ] ]
+    ]
+
+    macro [
+        [ [ #identifier identifier ] [ #operator [ macro ] ] [ #operator [ open_round ] ] [ #list parameters [ #template [ instance ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #identifier identifier ] [ #operator [ macro ] ] [ #operator [ open_round ] ]                                                                         [ #operator [ close_round ] ] ]
+    ]
+
+    public [
+        [ [ #keyword [ public ] ] [ #data public !true  ] ]
+        [                         [ #data public !false ] ]
+    ]
+
+    block [ { resolve [ resolve:block ] } @macro
+        [ [ #merge [ public ] ] [ #template block [ assign      ] ] ]
+        [ [ #merge [ public ] ] [ #template block [ alias       ] ] ]
+        [ [ #merge [ public ] ] [ #template block [ structure   ] ] ]
+        [ [ #merge [ public ] ] [ #template block [ enumeration ] ] ]
+        [ [ #merge [ public ] ] [ #template block [ namespace   ] ] ]
+        [ [ #merge [ public ] ] [ #template block [ trait       ] ] ]
+        [ [ #merge [ public ] ] [ #template block [ module      ] ] ]
+        [ [ #merge [ public ] ] [ #template block [ macro       ] ] ]
+        [                       [ #template block [ import      ] ] ]
+        [                       [ #template block [ export      ] ] ]
+        [                       [ #template block [ implement   ] ] ]
+    ]
+
+    statement [ @macro
+        [ [ #template statement [ assign    ] ] ]
+        [ [ #template statement [ reassign  ] ] ]
+        [ [ #template statement [ call      ] ] ]
+        [ [ #template statement [ macro     ] ] ]
+        [ [ #template statement [ alias     ] ] ]
+        [ [ #template statement [ scope     ] ] ]
+        [ [ #template statement [ terminate ] ] ]
+        [ [ #template statement [ return    ] ] ]
+        [ [ #template statement [ continue  ] ] ]
+        [ [ #template statement [ break     ] ] ]
+        [ [ #template statement [ match     ] ] ]
+        [ [ #template statement [ pass      ] ] ]
+        [ [ #template statement [ collect   ] ] ]
+        [ [ #template statement [ if        ] ] ]
+        [ [ #template statement [ while     ] ] ]
+        [ [ #template statement [ loop      ] ] ]
+        [ [ #template statement [ iterate   ] ] ]
+    ]
+
+    namespace [ @{ resolve [ resolve:namespace ] }
+        [ [ #keyword [ namespace ] ] [ #identifier name ] [ #operator [ open_curly ] ] [ #list block [ #template [ block ] ] ] [ #operator [ close_curly ] ] ]
+        [ [ #keyword [ namespace ] ] [ #identifier name ] [ #operator [ open_curly ] ]                                         [ #operator [ close_curly ] ] ]
+    ]
+
+    terminate [
+        [ [ #keyword [ terminate ] ] ]
+    ]
+
+    continue [
+        [ [ #keyword [ continue ] ] ]
+    ]
+
+    break [
+        [ [ #keyword [ break ] ] ]
+    ]
+
+    return [
+        [ [ #keyword [ return ] ] [ #template return [ instance ] ] ]
+    ]
+
+    pass [
+        [ [ #keyword [ pass ] ] [ #template return [ instance ] ] ]
+    ]
+
+    scope [ @macro
+        [ [ #operator [ open_curly ] ] [ #list statement [ #template [ statement ] ] ] [ #operator [ close_curly ] ] ]
+        [ [ #operator [ open_curly ] ]                                                 [ #operator [ close_curly ] ] ]
+    ]
+
+    #top [ @{ resolve [ resolve:top ] generate [ generate:top ] }
+        [ [ #list block [ #template [ block ] ] ] ]
+        [                                         ]
+    ]
+}
