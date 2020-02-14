@@ -28,18 +28,18 @@ file_settings {
     #submodule      "module"
 }
 
-user_methods {
-    "verify"        #method:verify
-    "build"         #method:build
-    "rebuild"       #method:rebuild
-    "clean"         #method:clean
-    "assemble"      #method:assemble
-    "route"         #method:route
+user_functions {
+    "verify"        #function:verify
+    "build"         #function:build
+    "rebuild"       #function:rebuild
+    "clean"         #function:clean
+    "assemble"      #function:assemble
+    "route"         #function:route
 }
 
-#method {
+#function {
 
-    #main [ [ #single method ] [ #single name ] [ #single source ] [ #single output ] [ #single library ] [ #list flags ]
+    #main [ [ #single function ] [ #single name ] [ #single source ] [ #single output ] [ #single library ] [ #list flags ]
 
         @
         #time
@@ -54,7 +54,7 @@ user_methods {
         #modify         [ #data #root ] [ #last ]
 
         @
-        #call           [ #method:print:setup ] [ #data "loading libraries..." ]
+        #call           [ #function:print:setup ] [ #data "loading libraries..." ]
         #iterate        [ #root:dependencies ]
         #string         [ #root:directory:library ] [ #last:instance ]
         #read_map       [ #last ]
@@ -63,38 +63,38 @@ user_methods {
         #end            [ #data #always ]
 
         @
-        #if             [ #data #present ] [ #root:user_methods ] [ #scope:method ]
-        #call           [ #method:print:setup ] [ #data "running " ] [ #scope:method ] [ #data "..." ]
-        #index          [ #root:user_methods ] [ #scope:method ]
+        #if             [ #data #present ] [ #root:user_functions ] [ #scope:function ]
+        #call           [ #function:print:setup ] [ #data "running " ] [ #scope:function ] [ #data "..." ]
+        #index          [ #root:user_functions ] [ #scope:function ]
         #resolve        [ #last ]
         #call           [ #last ]
         #else           [ #data #always ]
-        #call           [ #method:print:error ] [ #data "compiler has no method called " ] [ #scope:method ]
+        #call           [ #function:print:error ] [ #data "compiler has no function called " ] [ #scope:function ]
         #end            [ #data #always ]
 
         @
         #time
         #subtract       [ #last ] [ #scope:start_time ]
         #divide         [ #last ] [ #data 1000.0 ]
-        #call           [ #method:print:success ] [ #data "completed in " ] [ #last ] [ #data "s"]
+        #call           [ #function:print:success ] [ #data "completed in " ] [ #last ] [ #data "s"]
     ]
 
     load_cache [
-        #call           [ #method:print:build ] [ #data "loading cache..." ]
+        #call           [ #function:print:build ] [ #data "loading cache..." ]
         #string         [ #root:name ] [ #data "." ] [ #root:extention:cache ]
-        #call           [ #method:read_create_map ] [ #root:output ] [ #last ]
+        #call           [ #function:read_create_map ] [ #root:output ] [ #last ]
         #insert         [ #root ] [ #data #cache ] [ #last ]
         #modify         [ #data #root ] [ #last ]
     ]
 
     save_cache [
-        #call           [ #method:print:build ] [ #data "saving cache..." ]
+        #call           [ #function:print:build ] [ #data "saving cache..." ]
         #string         [ #root:output ] [ #root:name ] [ #data "." ] [ #root:extention:cache ]
         #write_map      [ #last ] [ #root:#cache ]
     ]
 
     load_compiler [
-        #call           [ #method:print:build ] [ #data "loading language..." ]
+        #call           [ #function:print:build ] [ #data "loading language..." ]
         #map            [ #data #file_settings ] [ #root:file_settings ] [ #data #pipeline ] [ #root:pipeline ]
         #insert         [ #root ] [ #data compiler ] [ #last ]
         #modify         [ #data #root ] [ #last ]
@@ -121,7 +121,7 @@ user_methods {
     ]
 
     clean [
-        #call           [ #method:print:clean ] [ #data "removing build files..." ]
+        #call           [ #function:print:clean ] [ #data "removing build files..." ]
         #string         [ #data "rm -rf " ] [ #root:output ] [ #data "*" ]
         #system         [ #data "bash" ] [ #data "-c" ] [ #last ]
     ]
@@ -129,36 +129,36 @@ user_methods {
     verify [
 
         @ load the compiler and cache
-        #call           [ #method:load_compiler ]
-        @#call           [ #method:load_cache ]
+        #call           [ #function:load_compiler ]
+        @#call           [ #function:load_cache ]
 
         @ compile the main module and save the cache
         #compile_module [ #root:compiler ] [ #data main ] [ #root:source ]
-        @#call           [ #method:save_cache ]
+        @#call           [ #function:save_cache ]
     ]
 
     build [
 
         @ load the compiler and cache
-        #call           [ #method:load_compiler ]
-        @#call           [ #method:load_cache ]
+        #call           [ #function:load_compiler ]
+        @#call           [ #function:load_cache ]
 
         @ compile the main module and save the cache
         #compile_module [ #root:compiler ] [ #data main ] [ #root:source ]
         #insert         [ #root ] [ #data main ] [ #last ]
         #modify         [ #data #root ] [ #last ]
-        @#call           [ #method:save_cache ]
+        @#call           [ #function:save_cache ]
 
         @ output the generated assembly code and assemble and rout it
         #string         [ #root:name ] [ #data "." ] [ #root:extention:assembly ]
-        #call           [ #method:write_create ] [ #root:output ] [ #last ] [ #data "code" ]
-        #call           [ #method:assemble ]
-        @#call           [ #method:route ]
+        #call           [ #function:write_create ] [ #root:output ] [ #last ] [ #data "code" ]
+        #call           [ #function:assemble ]
+        @#call           [ #function:route ]
     ]
 
     assemble [
         @ check if file is there -> if not, tell used to run build
-        #call           [ #method:print:build ] [ #data  "assembling..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -n FOR SETTING AN ALTERNATIVE NAME FOR THE MODULE (in this case opal instead of nt33)
+        #call           [ #function:print:build ] [ #data  "assembling..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -n FOR SETTING AN ALTERNATIVE NAME FOR THE MODULE (in this case opal instead of nt33)
         #silent         [ #data "opal" ] [ #data "example/main.asm" ] [ #data "-o" ] [ #data "output/nt33.uni" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to assemble" ]
@@ -167,7 +167,7 @@ user_methods {
 
     route [
         @ check if file is there -> if not, tell used to run build
-        #call           [ #method:print:build ] [ #data "routing..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -s IF RELEASE IS NOT ENABLED
+        #call           [ #function:print:build ] [ #data "routing..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -s IF RELEASE IS NOT ENABLED
         #silent         [ #data "entleman" ] [ #data "example/nt33.uni" ] [ #data "-o" ] [ #data "output/nt33.prg" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to route" ]
@@ -175,8 +175,8 @@ user_methods {
     ]
 
     rebuild [
-        #call           [ #method:clean ]
-        #call           [ #method:build ]
+        #call           [ #function:clean ]
+        #call           [ #function:build ]
     ]
 
     print {
@@ -190,13 +190,13 @@ user_methods {
         clean [ [ #list message ]
             #list           [ #root:color:magenta ] [ #data "clean" ]
             #merge          [ #last ] [ #scope:message ]
-            #call_list      [ #method:print:color ] [ #last ]
+            #call_list      [ #function:print:color ] [ #last ]
         ]
 
         build [ [ #list message ]
             #list           [ #root:color:cyan ] [ #data "build" ]
             #merge          [ #last ] [ #scope:message ]
-            #call_list      [ #method:print:color ] [ #last ]
+            #call_list      [ #function:print:color ] [ #last ]
         ]
     }
 }

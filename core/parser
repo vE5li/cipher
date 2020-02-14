@@ -72,14 +72,14 @@
         [ [ #operator [ open_round ] ]                                                                                                                                   [ #operator [ close_round ] ] ]
     ]
 
-    method_start [
-        [ [ #type_identifier [ Method ] ] [ #merge [ template_list ] ] [ #merge [ parameter_list ] ] ]
+    function_start [
+        [ [ #type_identifier [ Function ] ] [ #merge [ template_list ] ] [ #merge [ parameter_list ] ] ]
     ]
 
-    method_appearance [ @ { resolve [ resolve:method_appearance ] }
-        [ [ #merge [ method_start ] ] [ #operator [ case ] ] [ #keyword              [ not  ] ] [ #data returns !false ] ]
-        [ [ #merge [ method_start ] ] [ #operator [ case ] ] [ #template return_type [ type ] ]                          ]
-        [ [ #merge [ method_start ] ]                                                                                    ]
+    function_appearance [ @ { resolve [ resolve:function_appearance ] }
+        [ [ #merge [ function_start ] ] [ #operator [ case ] ] [ #keyword              [ not  ] ] [ #data returns !false ] ]
+        [ [ #merge [ function_start ] ] [ #operator [ case ] ] [ #template return_type [ type ] ]                          ]
+        [ [ #merge [ function_start ] ]                                                                                    ]
     ]
 
     redirect [
@@ -95,10 +95,10 @@
     ]
 
     real_type [ @{ resolve [ resolve:real_type ] }
-        [ [ #template method      [ method_appearance ] ]                                                                                                                                       ]
-        [ [ #operator             [ open_round        ] ]                                      [ #list     tuple [ #template [ type ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
-        [ [ #merge                [ redirection       ] ] [ #type_identifier type_identifier ] [ #merge          [ subtype_list                               ] ]                               ]
-        [ [ #keyword  type        [ any               ] ]                                      [ #merge          [ subtype_list                               ] ]                               ]
+        [ [ #template function    [ function_appearance ] ]                                                                                                                                       ]
+        [ [ #operator             [ open_round          ] ]                                      [ #list     tuple [ #template [ type ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #merge                [ redirection         ] ] [ #type_identifier type_identifier ] [ #merge          [ subtype_list                               ] ]                               ]
+        [ [ #keyword  type        [ any                 ] ]                                      [ #merge          [ subtype_list                               ] ]                               ]
     ]
 
     field [

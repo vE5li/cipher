@@ -1,4 +1,4 @@
-#method {
+#function {
 
     resolve {
 
@@ -8,7 +8,7 @@
         ]
 
         module [ [ #single self ] [ #single public [ boolean ] ]
-            #compile_module [ #context:#compiler ] [ #scope:self:name ]
+            #compile_module [ #root ] [ #scope:self:name ]
             #set            [ #data data ] [ #last ]
             #return         [ #scope:self ]
         ]
