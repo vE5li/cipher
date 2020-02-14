@@ -13,7 +13,7 @@ project {
 directory {
     library         "/home/code/qtc8/library/"
     core            "/home/code/h0vs/core/"
-    pass            "/home/code/h0vs/pass/"
+    pass            "/home/code/h0vs/passes/"
 }
 
 extention {
