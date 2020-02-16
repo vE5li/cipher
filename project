@@ -11,9 +11,9 @@ project {
 }
 
 directory {
-    library         "/home/code/qtc8/library/"
-    core            "/home/code/h0vs/core/"
-    pass            "/home/code/h0vs/passes/"
+    library         "/usr/share/seamonkey/qtc8/library/"
+    core            "/usr/share/seamonkey/h0vs/core/"
+    pass            "/usr/share/seamonkey/h0vs/passes/"
 }
 
 extention {
