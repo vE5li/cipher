@@ -248,13 +248,13 @@
 
     formula_piece [
         [ [ #operator [ open_square ] ] [ #list     [ #template [ formula_piece ] ] [ #template [ operator ] ] ] [ #operator [ close_square ] ] ]
-        [ [ #operator [ flip        ] ] [ #template [ instance                                               ] ]                                ]
+        [ [ #operator [ invert      ] ] [ #template [ instance                                               ] ]                                ]
         [ [ #template [ instance    ] ]                                                                                                         ]
     ]
 
     call [
-        [ [ #template instance [ instance ] ] [ #operator [ call ] ] [ #operator [ open_round ] ] [ #list parameter [ #template [ instance ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
-        [ [ #template instance [ instance ] ] [ #operator [ call ] ] [ #operator [ open_round ] ]                                                                        [ #operator [ close_round ] ] ]
+        [ [ #template instance [ instance ] ] [ #operator [ open_round ] ] [ #list parameter [ #template [ instance ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
+        [ [ #template instance [ instance ] ] [ #operator [ open_round ] ]                                                                        [ #operator [ close_round ] ] ]
     ]
 
     new_variant [

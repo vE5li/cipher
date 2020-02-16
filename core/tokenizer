@@ -87,7 +87,8 @@
         '*'             multiply
         '|'             or
         '&'             and
-        '~'             flip
+        '!'             invert
+        '~'             concatinate
         "||"            logical_or
         "&&"            logical_and
         '^'             xor
@@ -102,7 +103,6 @@
         '['             open_square
         ']'             close_square
         '#'             selector
-        '!'             call
         '$'             image
         ':'             colon
         ','             comma
