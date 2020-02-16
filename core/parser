@@ -241,7 +241,7 @@
 
     condition_piece [
         [ [ #operator [ open_square ] ] [ #list     [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #operator [ close_square ] ] ]
-        [ [ #operator [ call        ] ] [ #template [ condition_piece                                                  ] ]                                ]
+        [ [ #operator [ invert      ] ] [ #template [ condition_piece                                                  ] ]                                ]
         [ [ #template [ instance    ] ]                                                                                                                   ]
         [ [ #template [ if_case     ] ]                                                                                                                   ]
     ]
