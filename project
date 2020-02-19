@@ -116,7 +116,7 @@ user_functions {
         #merge          [ #root:compiler ] [ #last ]
         #modify         [ #data #root:compiler ] [ #last ]
         #end            [ #data #always ]
-        #insert         [ #root:compiler ] [ #data module_scope ] [ #data [] ]
+        #insert         [ #root:compiler ] [ #data module_scope ] [ #data [ ] ]
         #modify         [ #data #root:compiler ] [ #last ]
     ]
 
