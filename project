@@ -158,8 +158,8 @@ user_functions {
 
     assemble [
         @ check if file is there -> if not, tell used to run build
-        #call           [ #function:print:build ] [ #data  "assembling..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -n FOR SETTING AN ALTERNATIVE NAME FOR THE MODULE (in this case opal instead of nt33)
-        #silent         [ #data "opal" ] [ #data "example/main.asm" ] [ #data "-o" ] [ #data "output/nt33.uni" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
+        #call           [ #function:print:build ] [ #data  "assembling..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -n FOR SETTING AN ALTERNATIVE NAME FOR THE MODULE (in this case doofenshmirtz instead of nt33)
+        #silent         [ #data "doofenshmirtz" ] [ #data "example/main.asm" ] [ #data "-o" ] [ #data "output/nt33.uni" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to assemble" ]
         #end            [ #data #always ]
