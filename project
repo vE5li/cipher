@@ -54,7 +54,7 @@ user_functions {
         #modify         [ #data #root ] [ #last ]
 
         @
-        #call           [ #function:print:setup ] [ #data "loading libraries..." ]
+        #call           [ #function:#print:setup ] [ #data "loading libraries..." ]
         #iterate        [ #root:dependencies ]
         #string         [ #root:directory:library ] [ #last:instance ]
         #read_map       [ #last ]
@@ -64,37 +64,37 @@ user_functions {
 
         @
         #if             [ #data #present ] [ #root:user_functions ] [ #scope:function ]
-        #call           [ #function:print:setup ] [ #data "running " ] [ #scope:function ] [ #data "..." ]
+        #call           [ #function:#print:setup ] [ #data "running " ] [ #scope:function ] [ #data "..." ]
         #index          [ #root:user_functions ] [ #scope:function ]
         #resolve        [ #last ]
         #call           [ #last ]
         #else           [ #data #always ]
-        #call           [ #function:print:error ] [ #data "compiler has no function called " ] [ #scope:function ]
+        #call           [ #function:#print:error ] [ #data "compiler has no function called " ] [ #scope:function ]
         #end            [ #data #always ]
 
         @
         #time
         #subtract       [ #last ] [ #scope:start_time ]
         #divide         [ #last ] [ #data 1000.0 ]
-        #call           [ #function:print:success ] [ #data "completed in " ] [ #last ] [ #data "s"]
+        #call           [ #function:#print:success ] [ #data "completed in " ] [ #last ] [ #data "s"]
     ]
 
     load_cache [
-        #call           [ #function:print:build ] [ #data "loading cache..." ]
+        #call           [ #function:#print:build ] [ #data "loading cache..." ]
         #string         [ #root:name ] [ #data "." ] [ #root:extention:cache ]
-        #call           [ #function:read_create_map ] [ #root:output ] [ #last ]
+        #call           [ #function:#file:read_create_map ] [ #root:output ] [ #last ]
         #insert         [ #root ] [ #data #cache ] [ #last ]
         #modify         [ #data #root ] [ #last ]
     ]
 
     save_cache [
-        #call           [ #function:print:build ] [ #data "saving cache..." ]
+        #call           [ #function:#print:build ] [ #data "saving cache..." ]
         #string         [ #root:output ] [ #root:name ] [ #data "." ] [ #root:extention:cache ]
         #write_map      [ #last ] [ #root:#cache ]
     ]
 
     load_compiler [
-        #call           [ #function:print:build ] [ #data "loading language..." ]
+        #call           [ #function:#print:build ] [ #data "loading language..." ]
         #map            [ #data #file_settings ] [ #root:file_settings ] [ #data #pipeline ] [ #root:pipeline ]
         #insert         [ #root ] [ #data compiler ] [ #last ]
         #modify         [ #data #root ] [ #last ]
@@ -121,7 +121,7 @@ user_functions {
     ]
 
     clean [
-        #call           [ #function:print:clean ] [ #data "removing build files..." ]
+        #call           [ #function:#print:clean ] [ #data "removing build files..." ]
         #string         [ #data "rm -rf " ] [ #root:output ] [ #data "*" ]
         #system         [ #data "bash" ] [ #data "-c" ] [ #last ]
     ]
@@ -151,14 +151,14 @@ user_functions {
 
         @ output the generated assembly code and assemble and rout it
         #string         [ #root:name ] [ #data "." ] [ #root:extention:assembly ]
-        #call           [ #function:write_create ] [ #root:output ] [ #last ] [ #data "code" ]
+        #call           [ #function:#file:write_create ] [ #root:output ] [ #last ] [ #data "code" ]
         #call           [ #function:assemble ]
         @#call           [ #function:route ]
     ]
 
     assemble [
         @ check if file is there -> if not, tell used to run build
-        #call           [ #function:print:build ] [ #data  "assembling..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -n FOR SETTING AN ALTERNATIVE NAME FOR THE MODULE (in this case doofenshmirtz instead of nt33)
+        #call           [ #function:#print:build ] [ #data  "assembling..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -n FOR SETTING AN ALTERNATIVE NAME FOR THE MODULE (in this case doofenshmirtz instead of nt33)
         #silent         [ #data "doofenshmirtz" ] [ #data "example/main.asm" ] [ #data "-o" ] [ #data "output/nt33.uni" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to assemble" ]
@@ -167,7 +167,7 @@ user_functions {
 
     route [
         @ check if file is there -> if not, tell used to run build
-        #call           [ #function:print:build ] [ #data "routing..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -s IF RELEASE IS NOT ENABLED
+        #call           [ #function:#print:build ] [ #data "routing..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -s IF RELEASE IS NOT ENABLED
         #silent         [ #data "entleman" ] [ #data "example/nt33.uni" ] [ #data "-o" ] [ #data "output/nt33.prg" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to route" ]
@@ -179,7 +179,7 @@ user_functions {
         #call           [ #function:build ]
     ]
 
-    print {
+    #print {
 
         setup [ [ #list message ]
             #list           [ #data "[ setup ] " ]
@@ -188,15 +188,15 @@ user_functions {
         ]
 
         clean [ [ #list message ]
-            #list           [ #root:color:magenta ] [ #data "clean" ]
+            #list           [ #root:#color:magenta ] [ #data "clean" ]
             #merge          [ #last ] [ #scope:message ]
-            #call_list      [ #function:print:color ] [ #last ]
+            #call_list      [ #function:#print:color ] [ #last ]
         ]
 
         build [ [ #list message ]
-            #list           [ #root:color:cyan ] [ #data "build" ]
+            #list           [ #root:#color:cyan ] [ #data "build" ]
             #merge          [ #last ] [ #scope:message ]
-            #call_list      [ #function:print:color ] [ #last ]
+            #call_list      [ #function:#print:color ] [ #last ]
         ]
     }
 }

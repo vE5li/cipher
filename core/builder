@@ -1,24 +1,24 @@
 #function {
 
     #note [ [ #single flag [ identifier ] ] [ #single message [ string ] ]
-        #call           [ #function:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
         #set            [ #data module ] [ #last ]
-        #call           [ #function:format:tag ] [ #root:color:yellow ] [ #scope:flag ]
+        #call           [ #function:#format:tag ] [ #root:#color:yellow ] [ #scope:flag ]
         #print_line     [ #scope:module ] [ #data " " ] [ #last ] [ #data " " ] [ #scope:message ]
     ]
 
     #tokenize [
-        #call           [ #function:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
         #print_line     [ #last ] [ #data " tokenizing..." ]
     ]
 
     #parse [
-        #call           [ #function:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
         #print_line     [ #last ] [ #data " parsing..." ]
     ]
 
     #build [
-        #call           [ #function:format:tag ] [ #root:color:blue ] [ #context:#parents:-1 ]
+        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
         #print_line     [ #last ] [ #data " building..." ]
     ]
 }
