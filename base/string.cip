@@ -1,0 +1,88 @@
+import $super::(Vector, Iterator, Relation, Equal, Compare)
+
+public type StringIterator := VectorIterator<Character>
+
+public type MutableStringIterator := MutableVectorIterator<Character>
+
+public structure String {
+    data: Vector<Character>
+}
+
+derive Clone for String
+
+implement String {
+
+    public label new: Function() -> Self := {
+        return implied?(Vector::new())
+    }
+
+    public label from: Function(source: $Self) -> Self := {
+        return implied?(implied source.data.clone())
+    }
+
+    public label from_character: Function(character: Character) -> Self := {
+        return implied?(implied vector?(implied character))
+    }
+
+    public label is_empty: Function($self) -> Boolean := {
+        return self.data.is_empty()
+    }
+
+    public label length: Function($self) -> Integer := {
+        return self.data.length()
+    }
+
+    public label insert_character: Function(&self, index: Integer, character: Character) := {
+        self.data.insert(index, character)
+    }
+
+    public label push_character: Function(&self, character: Character) := {
+        self.insert_character(0, character)
+    }
+
+    public label push_character_back: Function(&self, character: Character) := {
+        self.data.push_back(character)
+    }
+
+    public label remove_character: Function(&self, index: Integer) -> Character := {
+        return self.data.remove(index)
+    }
+
+    public label characters: Function($self) -> StringIterator := {
+        return self.data.iterator()
+    }
+
+    public label mutable_characters: Function(&self) -> MutableStringIterator := {
+        return self.data.mutable_iterator()
+    }
+}
+
+implement Compare for String {
+
+    public label compare: Function($self, other: $Self) -> Relation := {
+
+        iterate self.characters().enumerate() as (character, index) {
+            if index == other.length() {
+                return Relation::Bigger
+            }
+
+            if character != other[index] {
+                return Relation::bigger(character > other[index])
+            }
+        }
+
+        match self.length() == other.length() {
+            case true -> return Relation::Equal
+            case false -> return Relation::Smaller
+        }
+    }
+}
+
+implement FromIterator<Character> for String {
+
+    public label from_iterator: Function<I: Iterator>(iterator: I<Character>) -> Self := {
+        label string := mutable Self::new()
+        iterator.for_each({ string.push_character_back(item) })
+        return string
+    }
+}

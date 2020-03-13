@@ -1,0 +1,6 @@
+import $super::iterator::Iterator
+
+public trait FromIterator<T> {
+
+    public label from_iterator: Function<I: Iterator>(iterator: I<T>) -> Self
+}

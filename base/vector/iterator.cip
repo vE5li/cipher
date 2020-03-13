@@ -1,0 +1,92 @@
+import $super::$super::Iterator
+
+public structure VectorIterator<T> {
+    vector: $Vector<T>
+    index: Integer,
+}
+
+implement<T> VectorIterator<T> {
+
+    public label new: Function(vector: $Vector<T>) -> Self {
+        return implied?(vector, 0)
+    }
+}
+
+implement<T> Iterator<T> for VectorIterator<T> {
+
+    public type Type := $T
+
+    public label next: Function(&self) -> Option<Type> := {
+
+        if self.index == self.vector.length {
+            return None
+        }
+
+        label item = $self.vector[self.index]
+        self.index += 1
+        return item
+    }
+}
+
+public structure MutableVectorIterator<T> {
+    vector: &Vector<T>
+    index: Integer,
+}
+
+implement<T> MutableVectorIterator<T> {
+
+    public label new: Function(vector: &Vector<T>) -> Self {
+        return implied?(vector, 0)
+    }
+}
+
+implement<T> Iterator<T> for MutableVectorIterator<T> {
+
+    public type Type := &T
+
+    public label next: Function(&self) -> Option<Type> := {
+
+        if self.index == self.vector.length {
+            return None
+        }
+
+        label item = &self.vector[self.index]
+        self.index += 1
+        return item
+    }
+}
+
+public structure OwnedVectorIterator<T> {
+    vector: &Vector<T>
+    removed: Integer,
+}
+
+implement<T> OwnedVectorIterator<T> {
+
+    public label new: Function(vector: &Vector<T>) -> Self {
+        return implied?(vector, 0)
+    }
+}
+
+implement<T> Iterator<T> for OwnedVectorIterator<T> {
+
+    public type Type := T
+
+    public label next: Function(&self) -> Option<Type> := {
+
+        if self.vector.is_empty() {
+            return None
+        }
+
+        label item = self.vector.offset_remove()
+        self.removed += 1
+        return item
+    }
+}
+
+implement<T> Drop for OwnedVectorIterator<T> {
+
+    public label drop: Function(self) := {
+        self.vector.offset_restore(self.removed)
+    }
+}

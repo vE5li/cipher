@@ -1,0 +1,4 @@
+public trait Equal {
+
+    public label is_equal: Function($self, other: $Self) -> Boolean
+}

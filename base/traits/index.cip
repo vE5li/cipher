@@ -1,0 +1,9 @@
+public trait Index<T> {
+
+    public label index: Function($self, index: Integer) -> $T
+}
+
+public trait MutableIndex<T> {
+
+    public label mutable_index: Function(&self, index: Integer) -> &T
+}

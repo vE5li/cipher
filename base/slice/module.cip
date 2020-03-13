@@ -1,0 +1,72 @@
+module iterator
+
+import iterator::any
+
+export iterator::any
+
+public structure Slice<T> {
+    address: Pointer<T>
+    size: Integer
+}
+
+implement<T> Slice<T> {
+
+    public label is_empty: Function($self) -> Boolean {
+        match self.size {
+            case 0 -> return true
+            case any -> return false
+        }
+    }
+
+    public label length: Function($self) -> Integer := {
+        return self.size
+    }
+
+    public label iterator: Function($self) -> SliceIterator<T> := {
+        return SliceIterator::new($self)
+    }
+
+    public label mutable_iterator: Function(&self) -> MutableSliceIterator<T> := {
+        return MutableSliceIterator::new(&self)
+    }
+
+    public label contains: Function($self, compare: $T) -> Boolean := {
+        return self.iterator().find({ return item == compare }).is_some()
+    }
+
+    public label replace: Function($self, from: $T, to: T) := {
+        iterate self.mutable_iterator() as item {
+            if item == from {
+                item := clone?(to)
+            }
+        }
+    }
+}
+
+implement<T> Clone for Slice<T> {
+
+    public label clone: Function($self) -> Self := {
+        @ ...
+    }
+}
+
+implement<T> Equal for Slice<T> {
+
+    public label is_equal: Function($self, other: $Self) -> Boolean := {
+        @ ...
+    }
+}
+
+implement<T> Index<T> for Slice<T> {
+
+    public label index: Function($self, index: Integer) -> $T := {
+        @ ...
+    }
+}
+
+implement<T> MutableIndex<T> for Slice<T> {
+
+    public label mutable_index: Function(&self, index: Integer) -> &T := {
+        @ ...
+    }
+}

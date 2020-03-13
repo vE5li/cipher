@@ -1,0 +1,145 @@
+module iterator
+
+import iterator::any
+
+export iterator::any
+
+public structure Vector<T> {
+    address: Pointer<T>
+    capacity: Integer
+    size: Integer
+}
+
+implement Vector<T> {
+
+    public label new: Function() -> Self := {
+        return implied?(implied Pointer::new(), 0, 0)
+    }
+
+    public label with_capacity: Function(capacity: Integer) -> Self := {
+        return implied?(implied allocate?(capacity), capacity, 0)
+    }
+
+    public label is_empty: Function($self) -> Boolean {
+        match self.size {
+            case 0 -> return true
+            case any -> return false
+        }
+    }
+
+    public label length: Function($self) -> Integer := {
+        return self.size
+    }
+
+    public label push: Function(&self, item: T) := {
+        @ ...
+    }
+
+    public label push_back: Function(&self, item: T) := {
+        self.insert(self.length() - 1, item)
+    }
+
+    public label pop: Function(&self) -> Option<T> := {
+        @ ...
+    }
+
+    public label insert: Function(&self, index: Integer, item: T) := {
+        @ ...
+    }
+
+    public label remove: Function(&self, index: Integer) -> T := {
+        @ ...
+    }
+
+    public label offset_remove: Function(&self) -> T := {
+        @ ...
+        self.address.offset(1)
+        @ ...
+    }
+
+    public label offset_restore: Function(&self, count: Integer) := {
+        self.address.offset(-count)
+    }
+
+    public label append: Function(&self, other: &Self) := {
+        other.drain().for_each({ self.push_back(item) })
+    }
+
+    public label clear: Function(&self) := {
+        self.drain().for_each({ drop?(item) })
+        @ maybe shrink the vector if its bigger than some threshhold
+    }
+
+    public label iterator: Function($self) -> VectorIterator<T> := {
+        return VectorIterator::new($self)
+    }
+
+    public label mutable_iterator: Function(&self) -> MutableVectorIterator<T> := {
+        return MutableVectorIterator::new(&self)
+    }
+
+    public label drain: Function(&self) -> OwnedVectorIterator<T> := {
+        return OwnedVectorIterator::new(&self)
+    }
+
+    public label contains: Function($self, compare: $T) -> Boolean := {
+        return self.iterator().find({ return item == compare }).is_some()
+    }
+
+    public label replace: Function($self, from: $T, to: T) := {
+        iterate self.mutable_iterator() as item {
+            if item == from {
+                item := clone?(to)
+            }
+        }
+    }
+
+    public label retain: Function(&self, filter: Function($T) -> Boolean) := {
+        label index := mutable 0
+        loop {
+            if index >= self.length() {
+                terminate
+            }
+
+            match filter($self[index]) {
+                case true -> index += 1
+                case false -> self.remove(index)
+            }
+        }
+    }
+}
+
+implement<T> Clone for Vector<T> {
+
+    public label clone: Function($self) -> Self := {
+        @ ...
+    }
+}
+
+implement<T> Equal for Vector<T> {
+
+    public label is_equal: Function($self, other: $Self) -> Boolean := {
+        @ ...
+    }
+}
+
+implement<T> Index<T> for Vector<T> {
+
+    public label index: Function($self, index: Integer) -> $T := {
+        @ ...
+    }
+}
+
+implement<T> MutableIndex<T> for Vector<T> {
+
+    public label mutable_index: Function(&self, index: Integer) -> &T := {
+        @ ...
+    }
+}
+
+implement<T> Drop for Vector<T> {
+
+    public label drop: Function(self) := {
+        @ ...
+    }
+}

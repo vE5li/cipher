@@ -1,0 +1,54 @@
+export (Option::Some, Option::None)
+
+public enumeration Option<T> {
+    Some(T)
+    None
+}
+
+implement<T> Option<T> {
+
+    public label is_some: Function($self) -> Boolean := {
+        match $self {
+            case Some -> return true
+            case None -> return false
+        }
+    }
+
+    public label is_none: Function($self) -> Boolean := {
+        match $self {
+            case Some -> return false
+            case None -> return true
+        }
+    }
+
+    public label some: Function($self, function: Function(item: $T)) := {
+        if case Some: item == $self {
+            function($item)
+        }
+    }
+
+    public label mutable_some: Function(&self, function: Function(item: &T)) := {
+        if case Some: item == &self {
+            function(&item)
+        }
+    }
+
+    public label owned_some: Function(self, function: Function(item: T)) := {
+        if case Some: item == self {
+            function(item)
+        }
+    }
+
+    public label none: Function($self, function: Function()) := {
+        if case None == $self {
+            function()
+        }
+    }
+
+    public label or: Function(self, other: T) -> Self := {
+        match self {
+            case Some: item -> return implied Some(item)
+            case None -> return implied Some(other)
+        }
+    }
+}
