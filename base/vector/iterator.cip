@@ -1,4 +1,4 @@
-import $super::$super::Iterator
+import super::super::iterator::Iterator
 
 public structure VectorIterator<T> {
     vector: $Vector<T>

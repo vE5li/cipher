@@ -37,8 +37,9 @@
     ]
 
     logical_operator [
-        [ [ #operator operator [ logical_and ] ] ]
+        [ [ #operator operator [ logical_xor ] ] ]
         [ [ #operator operator [ logical_or  ] ] ]
+        [ [ #operator operator [ logical_and ] ] ]
         [ [ #operator operator [ identical   ] ] ]
         [ [ #operator operator [ differ      ] ] ]
     ]

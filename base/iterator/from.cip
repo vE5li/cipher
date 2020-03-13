@@ -1,4 +1,4 @@
-import $super::iterator::Iterator
+import super::Iterator
 
 public trait FromIterator<T> {
 

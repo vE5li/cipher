@@ -1,13 +1,19 @@
-module traits
+module format
+module compare
+module iterator
+module index
+module operator
 module option
-module relation
 module vector
 module slice
 module string
 
-export traits::any
+export format
+export compare
+export iterator
+export index
+export operator
 export option::any
-export relation::Relation
 export vector::any
 export slice::any
-export string::String
+export string::any

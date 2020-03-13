@@ -1,5 +1,11 @@
-import $super::$super::Relation
-import $super::Equal
+module relation
+module equal
+
+import relation::Relation
+import equal::Equal
+
+export relation::Relation
+export equal::Equal
 
 public trait Compare {
 

@@ -1,8 +1,9 @@
 module iterator
 
-import iterator::any
-
 export iterator::any
+
+import iterator::any
+import super::format::Debug
 
 public structure Slice<T> {
     address: Pointer<T>
@@ -67,6 +68,13 @@ implement<T> Index<T> for Slice<T> {
 implement<T> MutableIndex<T> for Slice<T> {
 
     public label mutable_index: Function(&self, index: Integer) -> &T := {
+        @ ...
+    }
+}
+
+implement<T> Debug for Slice<T> {
+
+    public label debug: Function($self) -> String := {
         @ ...
     }
 }

@@ -1,0 +1,11 @@
+import super::String
+
+public trait Format {
+
+    public label format: Function($self) -> String
+}
+
+public trait Debug {
+
+    public label debug: Function($self) -> String
+}

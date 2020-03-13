@@ -1,8 +1,9 @@
 module iterator
 
-import iterator::any
-
 export iterator::any
+
+import iterator::any
+import super::format::any
 
 public structure Vector<T> {
     address: Pointer<T>
@@ -140,6 +141,20 @@ implement<T> MutableIndex<T> for Vector<T> {
 implement<T> Drop for Vector<T> {
 
     public label drop: Function(self) := {
+        @ ...
+    }
+}
+
+implement<T> Format for Vector<T> {
+
+    public label format: Function($self) -> String := {
+        @ ...
+    }
+}
+
+implement<T> Debug for Vector<T> {
+
+    public label debug: Function($self) -> String := {
         @ ...
     }
 }

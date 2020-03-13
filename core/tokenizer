@@ -89,6 +89,7 @@
         '&'             and
         '!'             invert
         '~'             concatinate
+        "^^"            logical_xor
         "||"            logical_or
         "&&"            logical_and
         '^'             xor
@@ -135,6 +136,7 @@
         trait           trait
         any             any
         implement       implement
+        derive          derive
         enumeration     enumeration
         structure       structure
         not             not
@@ -149,10 +151,13 @@
         mutable         mutable
         implied         implied
         self            self
+        super           super
+        root            root
+        base            base
     }
 }
 
 #identifier_tokenizer {
-    #type_prefix     [ _ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ] @ test filter validation
-    #prefix          [ _ a b c d e f g h i j k l m n o p q r s t u v w x y z ] @ test filter validation
+    #type_prefix     [ _ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ]
+    #prefix          [ _ a b c d e f g h i j k l m n o p q r s t u v w x y z ]
 }

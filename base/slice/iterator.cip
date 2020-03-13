@@ -1,4 +1,4 @@
-import $super::$super::Iterator
+import super::super::iterator::Iterator
 
 public structure SliceIterator<T> {
     slice: $Slice<T>

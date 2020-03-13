@@ -1,5 +1,9 @@
-import $super::$super::Option
-import $super::from::FromIterator
+module from
+
+export from::FromIterator
+
+import from::FromIterator
+import super::Option
 
 public trait Iterator<T> {
 

@@ -1,0 +1,44 @@
+public trait Add {
+
+    public label add: Function($self, other: $Self) -> Self
+}
+
+public trait Subtract {
+
+    public label subtract: Function($self, other: $Self) -> Self
+}
+
+public trait Multiply {
+
+    public label multiply: Function($self, other: $Self) -> Self
+}
+
+public trait Divide {
+
+    public label divide: Function($self, other: $Self) -> Self
+}
+
+public trait Invert {
+
+    public label invert: Function($self) -> Self
+}
+
+public trait And {
+
+    public label and: Function($self, other: $Self) -> Self
+}
+
+public trait Or {
+
+    public label or: Function($self, other: $Self) -> Self
+}
+
+public trait Xor {
+
+    public label xor: Function($self, other: $Self) -> Self
+}
+
+public trait Modulo {
+
+    public label modulo: Function($self, other: $Self) -> Self
+}

@@ -1,4 +1,11 @@
-import $super::(Vector, Iterator, Relation, Equal, Compare)
+module character
+
+export character::Character
+
+import super::Vector
+import super::iterator::Iterator
+import super::compare::(Compare, Equal, Relation)
+import character::Character
 
 public type StringIterator := VectorIterator<Character>
 
