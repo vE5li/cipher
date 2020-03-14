@@ -11,7 +11,7 @@ public structure Vector<T> {
     size: Integer
 }
 
-implement Vector<T> {
+implement<T> Vector<T> {
 
     public label new: Function() -> Self := {
         return implied?(implied Pointer::new(), 0, 0)
@@ -83,18 +83,6 @@ implement Vector<T> {
         return OwnedVectorIterator::new(&self)
     }
 
-    public label contains: Function($self, compare: $T) -> Boolean := {
-        return self.iterator().find({ return item == compare }).is_some()
-    }
-
-    public label replace: Function($self, from: $T, to: T) := {
-        iterate self.mutable_iterator() as item {
-            if item == from {
-                item := clone?(to)
-            }
-        }
-    }
-
     public label retain: Function(&self, filter: Function($T) -> Boolean) := {
         label index := mutable 0
         loop {
@@ -110,14 +98,32 @@ implement Vector<T> {
     }
 }
 
-implement<T> Clone for Vector<T> {
+implement<T: Compare> Vector<T> {
+
+    public label contains: Function($self, compare: $T) -> Boolean := {
+        return self.iterator().find({ return item == compare }).is_some()
+    }
+}
+
+implement<T: Compare & Clone> Vector<T> {
+
+    public label replace: Function($self, from: $T, to: T) := {
+        iterate self.mutable_iterator() as item {
+            if item == from {
+                item := clone?(to)
+            }
+        }
+    }
+}
+
+implement<T: Clone> Clone for Vector<T> {
 
     public label clone: Function($self) -> Self := {
         @ ...
     }
 }
 
-implement<T> Equal for Vector<T> {
+implement<T: Compare> Equal for Vector<T> {
 
     public label is_equal: Function($self, other: $Self) -> Boolean := {
         @ ...

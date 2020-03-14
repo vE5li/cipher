@@ -30,10 +30,16 @@ implement<T> Slice<T> {
     public label mutable_iterator: Function(&self) -> MutableSliceIterator<T> := {
         return MutableSliceIterator::new(&self)
     }
+}
+
+implement<T: Compare> Slice<T> {
 
     public label contains: Function($self, compare: $T) -> Boolean := {
         return self.iterator().find({ return item == compare }).is_some()
     }
+}
+
+implement<T: Compare & Clone> Slice<T> {
 
     public label replace: Function($self, from: $T, to: T) := {
         iterate self.mutable_iterator() as item {
