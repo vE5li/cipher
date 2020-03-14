@@ -42,6 +42,15 @@ implement<T> Iterator<T> {
     }
 
     public label collect<R: FromIterator>: Function(self) -> R {
-        return R::from_iterator(self)
+        return implied R::from_iterator(self)
+    }
+}
+
+implement Iterator<String> {
+
+    public label join: Function(self) -> String {
+        label string := mutable String::new()
+        self.for_each({ string.push_string_back($item) })
+        return cast_implied?(string)
     }
 }

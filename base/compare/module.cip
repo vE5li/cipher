@@ -16,8 +16,8 @@ implement Equal for Compare {
 
     public label is_equal: Function($self, other: $Self) -> Boolean {
         match self.compare(other) {
-            case Relation::Equal -> return true
-            case any -> return false
+            case Relation::Equal -> return implied true
+            case any -> return implied false
         }
     }
 }
