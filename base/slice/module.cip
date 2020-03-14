@@ -59,7 +59,7 @@ implement<T> Clone for Slice<T> {
     }
 }
 
-implement<T> Equal for Slice<T> {
+implement<T: Equal> Equal for Slice<T> {
 
     public label is_equal: Function($self, other: $Self) -> Boolean := {
         @ ...
@@ -80,7 +80,7 @@ implement<T> MutableIndex<T> for Slice<T> {
     }
 }
 
-implement<T> Debug for Slice<T> {
+implement<T: Debug> Debug for Slice<T> {
 
     public label debug: Function($self) -> String := {
         @ ...

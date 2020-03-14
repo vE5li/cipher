@@ -153,14 +153,14 @@ implement<T> Drop for Vector<T> {
     }
 }
 
-implement<T> Format for Vector<T> {
+implement<T: Format> Format for Vector<T> {
 
     public label format: Function($self) -> String := {
         @ ...
     }
 }
 
-implement<T> Debug for Vector<T> {
+implement<T: Debug> Debug for Vector<T> {
 
     public label debug: Function($self) -> String := {
         @ ...
