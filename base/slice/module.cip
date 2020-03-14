@@ -26,11 +26,11 @@ implement<T> Slice<T> {
     }
 
     public label iterator: Function($self) -> SliceIterator<T> := {
-        return SliceIterator::new($self)
+        return SliceIterator::from($self)
     }
 
     public label mutable_iterator: Function(&self) -> MutableSliceIterator<T> := {
-        return MutableSliceIterator::new(&self)
+        return MutableSliceIterator::from(&self)
     }
 }
 

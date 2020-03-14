@@ -7,7 +7,7 @@ public structure VectorIterator<T> {
 
 implement<T> VectorIterator<T> {
 
-    public label new: Function(vector: $Vector<T>) -> Self {
+    public label from: Function(vector: $Vector<T>) -> Self {
         return implied?(vector, 0)
     }
 }
@@ -35,7 +35,7 @@ public structure MutableVectorIterator<T> {
 
 implement<T> MutableVectorIterator<T> {
 
-    public label new: Function(vector: &Vector<T>) -> Self {
+    public label from: Function(vector: &Vector<T>) -> Self {
         return implied?(vector, 0)
     }
 }
@@ -63,7 +63,7 @@ public structure OwnedVectorIterator<T> {
 
 implement<T> OwnedVectorIterator<T> {
 
-    public label new: Function(vector: &Vector<T>) -> Self {
+    public label from: Function(vector: &Vector<T>) -> Self {
         return implied?(vector, 0)
     }
 }

@@ -3,6 +3,7 @@ module iterator
 export iterator::any
 
 import iterator::any
+import super::generic::New
 import super::clone::Clone
 import super::compare::Equal
 import super::format::any
@@ -14,10 +15,6 @@ public structure Vector<T> {
 }
 
 implement<T> Vector<T> {
-
-    public label new: Function() -> Self := {
-        return implied?(implied Pointer::new(), 0, 0)
-    }
 
     public label with_capacity: Function(capacity: Integer) -> Self := {
         return implied?(implied allocate?(capacity), capacity, 0)
@@ -74,15 +71,15 @@ implement<T> Vector<T> {
     }
 
     public label iterator: Function($self) -> VectorIterator<T> := {
-        return VectorIterator::new($self)
+        return VectorIterator::from($self)
     }
 
     public label mutable_iterator: Function(&self) -> MutableVectorIterator<T> := {
-        return MutableVectorIterator::new(&self)
+        return MutableVectorIterator::from(&self)
     }
 
     public label drain: Function(&self) -> OwnedVectorIterator<T> := {
-        return OwnedVectorIterator::new(&self)
+        return OwnedVectorIterator::from(&self)
     }
 
     public label retain: Function(&self, filter: Function($T) -> Boolean) := {
@@ -97,6 +94,13 @@ implement<T> Vector<T> {
                 case false -> self.remove(index)
             }
         }
+    }
+}
+
+implement<T> New for Vector<T> {
+
+    public label new: Function() -> Self := {
+        return implied?(implied Pointer::new(), 0, 0)
     }
 }
 

@@ -53,7 +53,7 @@ implement<T> Option<T> {
     }
 }
 
-implement<T> Debug for Option<T> {
+implement<T: Debug> Debug for Option<T> {
 
     public label debug: Function($self) -> String := {
         @ ...

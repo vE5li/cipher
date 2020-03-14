@@ -1,3 +1,4 @@
+module generic
 module clone
 module format
 module compare
@@ -9,6 +10,7 @@ module vector
 module slice
 module string
 
+export generic
 export clone
 export format
 export compare

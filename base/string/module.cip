@@ -3,6 +3,7 @@ module character
 export character::Character
 
 import super::Vector
+import super::generic::New
 import super::clone::Clone
 import super::iterator::Iterator
 import super::compare::(Compare, Relation)
@@ -19,10 +20,6 @@ public structure String {
 derive Clone for String
 
 implement String {
-
-    public label new: Function() -> Self := {
-        return implied?(Vector::new())
-    }
 
     public label from: Function(source: $Self) -> Self := {
         return implied?(implied source.data.clone())
@@ -62,6 +59,13 @@ implement String {
 
     public label mutable_characters: Function(&self) -> MutableStringIterator := {
         return self.data.mutable_iterator()
+    }
+}
+
+implement New for String {
+
+    public label new: Function() -> Self := {
+        return implied?(implied Vector::new())
     }
 }
 

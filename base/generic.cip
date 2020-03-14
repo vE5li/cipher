@@ -1,0 +1,4 @@
+public trait New {
+
+    public label new: Function() -> Self
+}

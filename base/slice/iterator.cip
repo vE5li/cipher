@@ -7,7 +7,7 @@ public structure SliceIterator<T> {
 
 implement<T> SliceIterator<T> {
 
-    public label new: Function(slice: $Slice<T>) -> Self {
+    public label from: Function(slice: $Slice<T>) -> Self {
         return implied?(slice, 0)
     }
 }
@@ -35,7 +35,7 @@ public structure MutableSliceIterator<T> {
 
 implement<T> MutableSliceIterator<T> {
 
-    public label new: Function(slice: &Slice<T>) -> Self {
+    public label from: Function(slice: &Slice<T>) -> Self {
         return implied?(slice, 0)
     }
 }
