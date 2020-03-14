@@ -3,6 +3,8 @@ module iterator
 export iterator::any
 
 import iterator::any
+import super::clone::Clone
+import super::compare::Equal
 import super::format::Debug
 
 public structure Slice<T> {
@@ -32,14 +34,14 @@ implement<T> Slice<T> {
     }
 }
 
-implement<T: Compare> Slice<T> {
+implement<T: Equal> Slice<T> {
 
     public label contains: Function($self, compare: $T) -> Boolean := {
         return self.iterator().find({ return item == compare }).is_some()
     }
 }
 
-implement<T: Compare & Clone> Slice<T> {
+implement<T: Equal & Clone> Slice<T> {
 
     public label replace: Function($self, from: $T, to: T) := {
         iterate self.mutable_iterator() as item {

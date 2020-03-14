@@ -1,0 +1,4 @@
+public trait Clone {
+
+    public label clone: Function($self) -> Self
+}

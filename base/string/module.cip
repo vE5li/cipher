@@ -3,8 +3,9 @@ module character
 export character::Character
 
 import super::Vector
+import super::clone::Clone
 import super::iterator::Iterator
-import super::compare::(Compare, Equal, Relation)
+import super::compare::(Compare, Relation)
 import character::Character
 
 public type StringIterator := VectorIterator<Character>

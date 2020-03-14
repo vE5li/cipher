@@ -1,3 +1,4 @@
+module clone
 module format
 module compare
 module iterator
@@ -8,6 +9,7 @@ module vector
 module slice
 module string
 
+export clone
 export format
 export compare
 export iterator
