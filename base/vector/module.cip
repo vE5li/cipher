@@ -97,13 +97,6 @@ implement<T> Vector<T> {
     }
 }
 
-implement<T> New for Vector<T> {
-
-    public label new: Function() -> Self := {
-        return implied?(implied Pointer::new(), 0, 0)
-    }
-}
-
 implement<T: Equal> Vector<T> {
 
     public label contains: Function($self, compare: $T) -> Boolean := {
@@ -119,6 +112,13 @@ implement<T: Equal & Clone> Vector<T> {
                 item := clone?(to)
             }
         }
+    }
+}
+
+implement<T> New for Vector<T> {
+
+    public label new: Function() -> Self := {
+        return implied?(implied Pointer::new(), 0, 0)
     }
 }
 
