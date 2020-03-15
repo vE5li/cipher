@@ -19,12 +19,12 @@ implement<T> Iterator<T> for VectorIterator<T> {
     public label next: Function(&self) -> Option<Type> := {
 
         if self.index == self.vector.length {
-            return None
+            return implied None
         }
 
         label item = $self.vector[self.index]
         self.index += 1
-        return item
+        return implied Some($item)
     }
 }
 
@@ -47,12 +47,12 @@ implement<T> Iterator<T> for MutableVectorIterator<T> {
     public label next: Function(&self) -> Option<Type> := {
 
         if self.index == self.vector.length {
-            return None
+            return implied None
         }
 
         label item = &self.vector[self.index]
         self.index += 1
-        return item
+        return implied Some(&item)
     }
 }
 
@@ -75,12 +75,12 @@ implement<T> Iterator<T> for OwnedVectorIterator<T> {
     public label next: Function(&self) -> Option<Type> := {
 
         if self.vector.is_empty() {
-            return None
+            return implied None
         }
 
         label item = self.vector.offset_remove()
         self.removed += 1
-        return item
+        return implied Some(item)
     }
 }
 

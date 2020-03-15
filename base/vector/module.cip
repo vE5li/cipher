@@ -22,13 +22,13 @@ implement<T> Vector<T> {
 
     public label is_empty: Function($self) -> Boolean {
         match self.size {
-            case 0 -> return true
-            case any -> return false
+            case 0 -> return implied true
+            case any -> return implied false
         }
     }
 
     public label length: Function($self) -> Integer := {
-        return self.size
+        return implied self.size
     }
 
     public label push: Function(&self, item: T) := {
@@ -71,15 +71,15 @@ implement<T> Vector<T> {
     }
 
     public label iterator: Function($self) -> VectorIterator<T> := {
-        return VectorIterator::from($self)
+        return implied VectorIterator::from($self)
     }
 
     public label mutable_iterator: Function(&self) -> MutableVectorIterator<T> := {
-        return MutableVectorIterator::from(&self)
+        return implied MutableVectorIterator::from(&self)
     }
 
     public label drain: Function(&self) -> OwnedVectorIterator<T> := {
-        return OwnedVectorIterator::from(&self)
+        return implied OwnedVectorIterator::from(&self)
     }
 
     public label retain: Function(&self, filter: Function($T) -> Boolean) := {
@@ -100,7 +100,7 @@ implement<T> Vector<T> {
 implement<T: Equal> Vector<T> {
 
     public label contains: Function($self, compare: $T) -> Boolean := {
-        return self.iterator().find({ return item == compare }).is_some()
+        return implied self.iterator().find({ return item == compare }).is_some()
     }
 }
 
@@ -160,13 +160,19 @@ implement<T> Drop for Vector<T> {
 implement<T: Format> Format for Vector<T> {
 
     public label format: Function($self) -> String := {
-        @ ...
+        match self.is_empty() {
+            case true -> return implied "[ ]"
+            case false -> return implied "[ " ~ self.iterator.for_each({ format?("{}", $item) }).join(", ") ~ " ]"
+        }
     }
 }
 
 implement<T: Debug> Debug for Vector<T> {
 
     public label debug: Function($self) -> String := {
-        @ ...
+        match self.is_empty() {
+            case true -> return implied "[ ]"
+            case false -> return implied "[ " ~ self.iterator.for_each({ format?("{debug}", $item) }).join(", ") ~ " ]"
+        }
     }
 }

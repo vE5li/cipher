@@ -30,11 +30,11 @@ implement String {
     }
 
     public label is_empty: Function($self) -> Boolean := {
-        return self.data.is_empty()
+        return implied self.data.is_empty()
     }
 
     public label length: Function($self) -> Integer := {
-        return self.data.length()
+        return implied self.data.length()
     }
 
     public label insert_character: Function(&self, index: Integer, character: Character) := {
@@ -53,12 +53,24 @@ implement String {
         return self.data.remove(index)
     }
 
+    public label insert_string: Function(&self, index: Integer, string: String) := {
+        @ ...
+    }
+
+    public label push_string: Function(&self, string: String) := {
+        @ ...
+    }
+
+    public label push_string_back: Function(&self, string: String) := {
+        @ ...
+    }
+
     public label characters: Function($self) -> StringIterator := {
-        return self.data.iterator()
+        return implied self.data.iterator()
     }
 
     public label mutable_characters: Function(&self) -> MutableStringIterator := {
-        return self.data.mutable_iterator()
+        return implied self.data.mutable_iterator()
     }
 }
 
@@ -75,17 +87,17 @@ implement Compare for String {
 
         iterate self.characters().enumerate() as (character, index) {
             if index == other.length() {
-                return Relation::Bigger
+                return implied Relation::Bigger
             }
 
             if character != other[index] {
-                return Relation::bigger(character > other[index])
+                return implied Relation::bigger(character > other[index])
             }
         }
 
         match self.length() == other.length() {
-            case true -> return Relation::Equal
-            case false -> return Relation::Smaller
+            case true -> return implied Relation::Equal
+            case false -> return implied Relation::Smaller
         }
     }
 }
@@ -95,6 +107,6 @@ implement FromIterator<Character> for String {
     public label from_iterator: Function<I: Iterator>(iterator: I<Character>) -> Self := {
         label string := mutable Self::new()
         iterator.for_each({ string.push_character_back(item) })
-        return string
+        return cast_implied?(string)
     }
 }
