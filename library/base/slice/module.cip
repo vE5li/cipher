@@ -16,28 +16,28 @@ implement<T> Slice<T> {
 
     public label is_empty: Function($self) -> Boolean {
         match self.size {
-            case 0 -> return implied true
-            case any -> return implied false
+            case 0 -> return true
+            case any -> return false
         }
     }
 
     public label length: Function($self) -> Integer := {
-        return implied self.size
+        return self.size
     }
 
     public label iterator: Function($self) -> SliceIterator<T> := {
-        return implied SliceIterator::from($self)
+        return SliceIterator::from($self)
     }
 
     public label mutable_iterator: Function(&self) -> MutableSliceIterator<T> := {
-        return implied MutableSliceIterator::from(&self)
+        return MutableSliceIterator::from(&self)
     }
 }
 
 implement<T: Equal> Slice<T> {
 
     public label contains: Function($self, compare: $T) -> Boolean := {
-        return implied self.iterator().find({ return item == compare }).is_some()
+        return self.iterator().find({ return item == compare }).is_some()
     }
 }
 

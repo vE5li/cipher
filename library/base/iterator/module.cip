@@ -27,10 +27,10 @@ implement<T> Iterator<T> {
     public label find: Function(&self, function: Function(item: Type) -> Option<Type>) := {
         while case Some: item == self.next() {
             if function($item) {
-                return implied Some(raw?(item))
+                return Some(raw?(item))
             }
         }
-        return implied None
+        return None
     }
 
     public label map: Function<R>(&self, function: Function(item: Type) -> R) -> HeapIterator<R> := {
@@ -42,7 +42,7 @@ implement<T> Iterator<T> {
     }
 
     public label collect<R: FromIterator>: Function(self) -> R {
-        return implied R::from_iterator(self)
+        return R::from_iterator(self)
     }
 }
 

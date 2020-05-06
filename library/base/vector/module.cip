@@ -22,13 +22,13 @@ implement<T> Vector<T> {
 
     public label is_empty: Function($self) -> Boolean {
         match self.size {
-            case 0 -> return implied true
-            case any -> return implied false
+            case 0 -> return true
+            case any -> return false
         }
     }
 
     public label length: Function($self) -> Integer := {
-        return implied self.size
+        return self.size
     }
 
     public label push: Function(&self, item: T) := {
@@ -71,15 +71,15 @@ implement<T> Vector<T> {
     }
 
     public label iterator: Function($self) -> VectorIterator<T> := {
-        return implied VectorIterator::from($self)
+        return VectorIterator::from($self)
     }
 
     public label mutable_iterator: Function(&self) -> MutableVectorIterator<T> := {
-        return implied MutableVectorIterator::from(&self)
+        return MutableVectorIterator::from(&self)
     }
 
     public label drain: Function(&self) -> OwnedVectorIterator<T> := {
-        return implied OwnedVectorIterator::from(&self)
+        return OwnedVectorIterator::from(&self)
     }
 
     public label retain: Function(&self, filter: Function($T) -> Boolean) := {
@@ -100,7 +100,7 @@ implement<T> Vector<T> {
 implement<T: Equal> Vector<T> {
 
     public label contains: Function($self, compare: $T) -> Boolean := {
-        return implied self.iterator().find({ return item == compare }).is_some()
+        return self.iterator().find({ return item == compare }).is_some()
     }
 }
 
@@ -161,8 +161,8 @@ implement<T: Format> Format for Vector<T> {
 
     public label format: Function($self) -> String := {
         match self.is_empty() {
-            case true -> return implied "[ ]"
-            case false -> return implied "[ " ~ self.iterator.for_each({ format?("{}", $item) }).join(", ") ~ " ]"
+            case true -> return "[ ]"
+            case false -> return "[ " ~ self.iterator.for_each({ format?("{}", $item) }).join(", ") ~ " ]"
         }
     }
 }
@@ -171,8 +171,8 @@ implement<T: Debug> Debug for Vector<T> {
 
     public label debug: Function($self) -> String := {
         match self.is_empty() {
-            case true -> return implied "[ ]"
-            case false -> return implied "[ " ~ self.iterator.for_each({ format?("{debug}", $item) }).join(", ") ~ " ]"
+            case true -> return "[ ]"
+            case false -> return "[ " ~ self.iterator.for_each({ format?("{debug}", $item) }).join(", ") ~ " ]"
         }
     }
 }

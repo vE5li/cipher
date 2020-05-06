@@ -1,4 +1,5 @@
 module generic
+module copy
 module clone
 module format
 module compare
@@ -11,6 +12,7 @@ module slice
 module string
 
 export generic
+export copy
 export clone
 export format
 export compare

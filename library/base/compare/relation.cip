@@ -8,15 +8,15 @@ implement Relation {
 
     public label bigger: Function(bigger: Boolean) -> Self := {
         match bigger {
-            case true -> return implied Relation::Bigger
-            case false -> return implied Relation::Smaller
+            case true -> return Relation::Bigger
+            case false -> return Relation::Smaller
         }
     }
 
     public label smaller: Function(smaller: Boolean) -> Self := {
         match smaller {
-            case true -> return implied Relation::Smaller
-            case false -> return implied Relation::Bigger
+            case true -> return Relation::Smaller
+            case false -> return Relation::Bigger
         }
     }
 }

@@ -9,15 +9,15 @@ implement<T> Option<T> {
 
     public label is_some: Function($self) -> Boolean := {
         match $self {
-            case Some -> return implied true
-            case None -> return implied false
+            case Some -> return true
+            case None -> return false
         }
     }
 
     public label is_none: Function($self) -> Boolean := {
         match $self {
-            case Some -> return implied false
-            case None -> return implied true
+            case Some -> return false
+            case None -> return true
         }
     }
 
@@ -47,8 +47,8 @@ implement<T> Option<T> {
 
     public label or: Function(self, other: T) -> Self := {
         match self {
-            case Some: item -> return implied Some(item)
-            case None -> return implied Some(other)
+            case Some: item -> return Some(item)
+            case None -> return Some(other)
         }
     }
 }
@@ -57,8 +57,8 @@ implement<T: Debug> Debug for Option<T> {
 
     public label debug: Function($self) -> String := {
         match $self {
-            case Some: item -> return implied format?("Some({debug})", $item)
-            case None -> return implied "None"
+            case Some: item -> return format?("Some({debug})", $item)
+            case None -> return "None"
         }
     }
 }

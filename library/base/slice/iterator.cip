@@ -19,12 +19,12 @@ implement<T> Iterator<T> for SliceIterator<T> {
     public label next: Function(&self) -> Option<Type> := {
 
         if self.index == self.slice.length {
-            return implied None
+            return None
         }
 
         label item = $self.slice[self.index]
         self.index += 1
-        return implied Some($item)
+        return Some($item)
     }
 }
 
@@ -47,11 +47,11 @@ implement<T> Iterator<T> for MutableSliceIterator<T> {
     public label next: Function(&self) -> Option<Type> := {
 
         if self.index == self.slice.length {
-            return implied None
+            return None
         }
 
         label item = &self.slice[self.index]
         self.index += 1
-        return implied Some(&item)
+        return Some(&item)
     }
 }

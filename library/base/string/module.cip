@@ -30,11 +30,11 @@ implement String {
     }
 
     public label is_empty: Function($self) -> Boolean := {
-        return implied self.data.is_empty()
+        return self.data.is_empty()
     }
 
     public label length: Function($self) -> Integer := {
-        return implied self.data.length()
+        return self.data.length()
     }
 
     public label insert_character: Function(&self, index: Integer, character: Character) := {
@@ -66,11 +66,11 @@ implement String {
     }
 
     public label characters: Function($self) -> StringIterator := {
-        return implied self.data.iterator()
+        return self.data.iterator()
     }
 
     public label mutable_characters: Function(&self) -> MutableStringIterator := {
-        return implied self.data.mutable_iterator()
+        return self.data.mutable_iterator()
     }
 }
 
@@ -87,17 +87,17 @@ implement Compare for String {
 
         iterate self.characters().enumerate() as (character, index) {
             if index == other.length() {
-                return implied Relation::Bigger
+                return Relation::Bigger
             }
 
             if character != other[index] {
-                return implied Relation::bigger(character > other[index])
+                return Relation::bigger(character > other[index])
             }
         }
 
         match self.length() == other.length() {
-            case true -> return implied Relation::Equal
-            case false -> return implied Relation::Smaller
+            case true -> return Relation::Equal
+            case false -> return Relation::Smaller
         }
     }
 }
