@@ -2,7 +2,7 @@ core            [ tokenizer parser builder ]
 
 dependencies    [ string color format debug file ]
 
-pipeline        [ resolve @@ optimize generate@@ ]
+pipeline        [ resolve @@ optimize generate @@ ]
 
 project {
     name            "h0vs"
@@ -11,9 +11,10 @@ project {
 }
 
 directory {
-    library         "/usr/share/seamonkey/qtc8/library/"
     core            "/usr/share/seamonkey/h0vs/core/"
     pass            "/usr/share/seamonkey/h0vs/passes/"
+    library         "/usr/share/seamonkey/h0vs/library/"
+    utility         "/usr/share/seamonkey/qtc8/library/"
 }
 
 extention {
@@ -37,146 +38,313 @@ user_functions {
     "route"         #function:route
 }
 
+new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n    print_line?(\"hello, world!\")\n    return 0\n}\n"
+
 #function {
 
-    #main [ [ #single function ] [ #single name ] [ #single source ] [ #single output ] [ #single library ] [ #list flags ]
+    append_seperator [ [ #single source ] [ #single seperator ]
+        #if             [ #data #equals ] [ #scope:source:-1 ] [ #scope:seperator ]
+        #return         [ #scope:source ]
+        #else
+        #string         [ #scope:source ] [ #scope:seperator ]
+        #return         [ #last ]
+        #end
+    ]
 
-        @
+    process_arguments [ [ #single arguments ]
+
+        @ create configuration and index
+        #set            [ #data configuration ] [ #data { debug !false symbols !false source "source/" output "output/" libraries [ ] } ]
+        #length         [ #scope:arguments ]
+        #set            [ #data count ] [ #last ]
+        #set            [ #data index ] [ #data 1 ]
+
+        @ iterate over all arguments and match
+        #while          [ #data #not_bigger ] [ #scope:index ] [ #scope:count ]
+        #index          [ #scope:arguments ] [ #scope:index ]
+
+        @ set output directory
+        #if             [ #data #equals ] [ #last ] [ #data "-o" ]
+        #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected output directory" ]
+        #ensure         [ #data #not_present ] [ #scope ] [ #data output_set ] [ #data "output directory may only be spceified once" ]
+        #set            [ #data output_set ] [ #data !true ]
+        #add            [ #scope:index ] [ #data 1 ]
+        #set            [ #data index ] [ #last ]
+        #index          [ #scope:arguments ] [ #scope:index ]
+        #call           [ #function:append_seperator ] [ #last ] [ #data '/' ]
+        #modify         [ #data #scope:configuration:output ] [ #last ]
+
+        @ set source directory
+        #else           [ #data #equals ] [ #last ] [ #data "-s" ]
+        #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected source directory" ]
+        #ensure         [ #data #not_present ] [ #scope ] [ #data source_set ] [ #data "source directory may only be spceified once" ]
+        #set            [ #data source_set ] [ #data !true ]
+        #add            [ #scope:index ] [ #data 1 ]
+        #set            [ #data index ] [ #last ]
+        #index          [ #scope:arguments ] [ #scope:index ]
+        #call           [ #function:append_seperator ] [ #last ] [ #data '/' ]
+        #modify         [ #data #scope:configuration:source ] [ #last ]
+
+        @ add external library
+        #else           [ #data #equals ] [ #last ] [ #data "-l" ]
+        #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected library" ]
+        #add            [ #scope:index ] [ #data 1 ]
+        #set            [ #data index ] [ #last ]
+        #index          [ #scope:arguments ] [ #scope:index ]
+        #ensure         [ #data #not_contains ] [ #scope:configuration:libraries ] [ #last ] [ #data "library " ] [ #last ] [ #data " may only be included once" ]
+        #append         [ #scope:configuration:libraries ] [ #last ]
+        #modify         [ #data #scope:configuration:libraries ] [ #last ]
+
+        @ dump symbols
+        #else           [ #data #equals ] [ #last ] [ #data "-S" ]
+        #ensure         [ #data #not_present ] [ #scope ] [ #data symbols_set ] [ #data "symbols flag may only be set once" ]
+        #set            [ #data symbols_set ] [ #data !true ]
+        #modify         [ #data #scope:configuration:symbols ] [ #data !true ]
+
+        @ enable debug
+        #else           [ #data #equals ] [ #last ] [ #data "-d" ]
+        #ensure         [ #data #not_present ] [ #scope ] [ #data debug_set ] [ #data "debug flag may only be set once" ]
+        #set            [ #data debug_set ] [ #data !true ]
+        #modify         [ #data #scope:configuration:debug ] [ #data !true ]
+
+        @ add source file
+        #else
+        #ensure         [ #data #not_equals ] [ #last:1 ] [ #data '-' ] [ #data "invalid flag " ] [ #last ]
+        #error          [ #data "unexpected parameter " ] [ #last ]
+        #end
+
+        @ increment argument index
+        #add            [ #scope:index ] [ #data 1 ]
+        #set            [ #data index ] [ #last ]
+
+        @ return configuration
+        #end
+        #return         [ #scope:configuration ]
+    ]
+
+    new [ [ #single arguments ]
+
+        @ make sure the right number of arguments is passed
+        #ensure         [ #data #not_empty ] [ #scope:arguments ] [ #data "expected a project name" ]
+        #ensure         [ #data #smaller ] [ #scope:arguments ] [ #data 3 ] [ #data "too many parameters provided" ]
+
+        @ make sure directory does not already exist
+        #if             [ #data #file_present ] [ #scope:arguments:1 ]
+        #print_line     [ #data "directory already exists, nothing was changed" ]
+        #terminate
+        #end
+
+        @ get the path of the main file
+        #if             [ #data #bigger ] [ #scope:arguments ] [ #data 1 ]
+        #call           [ #function:append_seperator ] [ #scope:arguments:2 ] [ #data '/' ]
+        #string         [ #scope:arguments:1 ] [ #data '/' ] [ #last ] [ #data "main.cip" ]
+        #else
+        #string         [ #scope:arguments:1 ] [ #data "/source/main.cip" ]
+        #end
+        #set            [ #data path ] [ #last ]
+
+        @ load the file library
+        #string         [ #root:directory:utility ] [ #data "file" ]
+        #read_map       [ #last ]
+        #merge          [ #root ] [ #last ]
+        #modify         [ #data #root ] [ #last ]
+
+        @ create the new file with default main function
+        #call           [ #function:#file:write_create ] [ #scope:path ] [ #root:new_file ]
+        #print_line     [ #data "created main file at " ] [ #scope:path ]
+    ]
+
+    #main [ [ #single name ] [ #single function ] [ #list arguments ]
+
+        @ if the user wants to create a new project
+        #if             [ #data #equals ] [ #scope:function ] [ #data "new" ]
+        #call           [ #function:new ] [ #scope:arguments ]
+        #terminate
+        #end
+
+        @ take initial time passed
         #time
         #set            [ #data start_time ] [ #last ]
 
-        @
-        #insert         [ #root ] [ #data name ] [ #scope:name ] @ PARSE INTERNALLY
-        #insert         [ #last ] [ #data source ] [ #scope:source ] @ PARSE INTERNALLY
-        #insert         [ #last ] [ #data output ] [ #scope:output ] @ PARSE INTERNALLY
-        #insert         [ #last ] [ #data library ] [ #scope:library ] @ PARSE INTERNALLY
-        #insert         [ #last ] [ #data flags ] [ #scope:flags ] @ PARSE INTERNALLY
-        #modify         [ #data #root ] [ #last ]
+        @ process command line arguments
+        #call           [ #function:process_arguments ] [ #scope:arguments ]
+        #set            [ #data configuration ] [ #last ]
 
-        @
+        @ load libraries
         #call           [ #function:#print:setup ] [ #data "loading libraries..." ]
         #iterate        [ #root:dependencies ]
-        #string         [ #root:directory:library ] [ #last:instance ]
+        #string         [ #root:directory:utility ] [ #last:instance ]
         #read_map       [ #last ]
         #merge          [ #root ] [ #last ]
         #modify         [ #data #root ] [ #last ]
         #end            [ #data #always ]
 
-        @
+        @ if the user is trying to invoke a valid function
         #if             [ #data #present ] [ #root:user_functions ] [ #scope:function ]
         #call           [ #function:#print:setup ] [ #data "running " ] [ #scope:function ] [ #data "..." ]
         #index          [ #root:user_functions ] [ #scope:function ]
         #resolve        [ #last ]
-        #call           [ #last ]
+        #call           [ #last ] [ #scope:name ] [ #scope:configuration ]
+
+        @ if the user is trying to invoke an invalid function
         #else           [ #data #always ]
         #call           [ #function:#print:error ] [ #data "compiler has no function called " ] [ #scope:function ]
         #end            [ #data #always ]
 
-        @
+        @ print out the elapsed time in seconds
         #time
         #subtract       [ #last ] [ #scope:start_time ]
         #divide         [ #last ] [ #data 1000.0 ]
         #call           [ #function:#print:success ] [ #data "completed in " ] [ #last ] [ #data "s"]
     ]
 
-    load_cache [
+    load_cache [ [ #single name ] [ #single output ]
         #call           [ #function:#print:build ] [ #data "loading cache..." ]
-        #string         [ #root:name ] [ #data "." ] [ #root:extention:cache ]
-        #call           [ #function:#file:read_create_map ] [ #root:output ] [ #last ]
+        #string         [ #scope:name ] [ #data "." ] [ #root:extention:cache ]
+        #call           [ #function:#file:read_create_map ] [ #scope:output ] [ #last ]
         #insert         [ #root ] [ #data #cache ] [ #last ]
         #modify         [ #data #root ] [ #last ]
     ]
 
-    save_cache [
+    save_cache [ [ #single name ] [ #single output ]
         #call           [ #function:#print:build ] [ #data "saving cache..." ]
-        #string         [ #root:output ] [ #root:name ] [ #data "." ] [ #root:extention:cache ]
+        #string         [ #scope:output ] [ #scope:name ] [ #data "." ] [ #root:extention:cache ]
         #write_map      [ #last ] [ #root:#cache ]
     ]
 
     load_compiler [
+
+        @ load the file settings and the pipeline
         #call           [ #function:#print:build ] [ #data "loading language..." ]
-        #map            [ #data #file_settings ] [ #root:file_settings ] [ #data #pipeline ] [ #root:pipeline ]
-        #insert         [ #root ] [ #data compiler ] [ #last ]
-        #modify         [ #data #root ] [ #last ]
+        #map            [ #data #file_settings ] [ #root:file_settings ] [ #data #pipeline ] [ #root:pipeline ] [ #data module_scope ] [ #data [ ] ]
+        #set            [ #data compiler ] [ #last ]
+
+        @ load compiler libraries
         #iterate        [ #root:dependencies ]
-        #string         [ #root:directory:library ] [ #last:instance ]
+        #string         [ #root:directory:utility ] [ #last:instance ]
         #read_map       [ #last ]
-        #merge          [ #root:compiler ] [ #last ]
-        #modify         [ #data #root:compiler ] [ #last ]
+        #merge          [ #scope:compiler ] [ #last ]
+        #modify         [ #data #scope:compiler ] [ #last ]
         #end            [ #data #always ]
+
+        @ load compiler core
         #iterate        [ #root:core ]
         #string         [ #root:directory:core ] [ #last:instance ]
         #read_map       [ #last ]
-        #merge          [ #root:compiler ] [ #last ]
-        #modify         [ #data #root:compiler ] [ #last ]
+        #merge          [ #scope:compiler ] [ #last ]
+        #modify         [ #data #scope:compiler ] [ #last ]
         #end            [ #data #always ]
+
+        @ load passes
         #iterate        [ #root:pipeline ]
         #string         [ #root:directory:pass ] [ #last:instance ]
         #read_map       [ #last ]
-        #merge          [ #root:compiler ] [ #last ]
-        #modify         [ #data #root:compiler ] [ #last ]
+        #merge          [ #scope:compiler ] [ #last ]
+        #modify         [ #data #scope:compiler ] [ #last ]
         #end            [ #data #always ]
-        #insert         [ #root:compiler ] [ #data module_scope ] [ #data [ ] ]
-        #modify         [ #data #root:compiler ] [ #last ]
+
+        @ return initialized compiler
+        #return         [ #scope:compiler ]
     ]
 
-    clean [
+    invoke_compiler [ [ #single debug ] [ #single arguments ]
+
+        @ if debug more is enabled
+        #if             [ #data #true ] [ #scope:debug ]
+        #append         [ #scope:arguments ] [ #data "-d" ]
+        #invoke         [ #data #system ] [ #last ]
+
+        @ if debug mode is not enabled
+        #else
+        #invoke         [ #data #silent ] [ #scope:arguments ]
+        #end
+        #return         [ #last ]
+    ]
+
+    verify [ [ #single name ] [ #single configuration ]
+        @#call           [ #function:load_cache ] [ #scope:name ] [ #scope:name ]
+        #call           [ #function:load_compiler ]
+        #compile_module [ #last ] [ #data main ] [ #scope:configuration:source ]
+        #set            [ #data main ] [ #last ]
+        @#call           [ #function:save_cache ] [ #scope:name ] [ #scope:name ]
+        #return         [ #scope:main ]
+    ]
+
+    build [ [ #single name ] [ #single configuration ]
+
+        @ compile the main module and save the cache
+        #call           [ #function:verify ] [ #scope:name ] [ #scope:configuration ]
+        #set            [ #data main ] [ #last ]
+
+        @ output the generated assembly code and assemble and rout it
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data "." ] [ #root:extention:assembly ]
+        #system         [ #data "cp" ] [ #data "example/main.asm" ] [ #last ]
+        @#call           [ #function:#file:write_create ] [ #last ] [ #data "code" ]
+        @#call           [ #function:#file:write_create ] [ #last ] [ #scope:main:code ]
+        #call           [ #function:assemble ] [ #scope:name ] [ #scope:configuration ]
+        #call           [ #function:route ] [ #scope:name ] [ #scope:configuration ]
+    ]
+
+    rebuild [ [ #single name ] [ #single configuration ]
+        #call           [ #function:clean ] [ #scope:name ] [ #scope:configuration ]
+        #call           [ #function:build ] [ #scope:name ] [ #scope:configuration ]
+    ]
+
+    clean [ [ #single ] [ #single configuration ]
         #call           [ #function:#print:clean ] [ #data "removing build files..." ]
-        #string         [ #data "rm -rf " ] [ #root:output ] [ #data "*" ]
+        #string         [ #data "rm -rf " ] [ #scope:configuration:output ] [ #data "*" ]
         #system         [ #data "bash" ] [ #data "-c" ] [ #last ]
     ]
 
-    verify [
+    assemble [ [ #single name ] [ #single configuration ]
 
-        @ load the compiler and cache
-        #call           [ #function:load_compiler ]
-        @#call           [ #function:load_cache ]
+        @ get the path of the source and outputfile
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:assembly ]
+        #set            [ #data source_file ] [ #last ]
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:logic ]
+        #set            [ #data output_file ] [ #last ]
 
-        @ compile the main module and save the cache
-        #compile_module [ #root:compiler ] [ #data main ] [ #root:source ]
-        @#call           [ #function:save_cache ]
-    ]
+        @ make sure that the source file exists
+        #if             [ #data #not_file_present ] [ #scope:source_file ]
+        #error          [ #data "file to be assembled was not found, try running build first" ]
+        #end
 
-    build [
+        @ invoke doofenshmirtz to assemble
+        #call           [ #function:#print:build ] [ #data "assembling..." ]
+        #list           [ #data "doofenshmirtz" ] [ #scope:source_file ] [ #data "-o" ] [ #scope:output_file ]
+        #call           [ #function:invoke_compiler ] [ #scope:configuration:debug ] [ #last ]
 
-        @ load the compiler and cache
-        #call           [ #function:load_compiler ]
-        @#call           [ #function:load_cache ]
-
-        @ compile the main module and save the cache
-        #compile_module [ #root:compiler ] [ #data main ] [ #root:source ]
-        #insert         [ #root ] [ #data main ] [ #last ]
-        #modify         [ #data #root ] [ #last ]
-        @#call           [ #function:save_cache ]
-
-        @ output the generated assembly code and assemble and rout it
-        #string         [ #root:name ] [ #data "." ] [ #root:extention:assembly ]
-        #call           [ #function:#file:write_create ] [ #root:output ] [ #last ] [ #data "code" ]
-        #call           [ #function:assemble ]
-        @#call           [ #function:route ]
-    ]
-
-    assemble [
-        @ check if file is there -> if not, tell used to run build
-        #call           [ #function:#print:build ] [ #data  "assembling..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -n FOR SETTING AN ALTERNATIVE NAME FOR THE MODULE (in this case doofenshmirtz instead of nt33)
-        #silent         [ #data "doofenshmirtz" ] [ #data "example/main.asm" ] [ #data "-o" ] [ #data "output/nt33.uni" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
+        @ terminate compilation if assembling failed
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to assemble" ]
         #end            [ #data #always ]
     ]
 
-    route [
-        @ check if file is there -> if not, tell used to run build
-        #call           [ #function:#print:build ] [ #data "routing..." ] @ ALSO PASS -d IF DEBUG IS ENABLED, ALSO PASS -s IF RELEASE IS NOT ENABLED
-        #silent         [ #data "entleman" ] [ #data "example/nt33.uni" ] [ #data "-o" ] [ #data "output/nt33.prg" ] @[ #data "-c" ] [ #data "output/nt33.che" ] @ MAKE THIS WORK WITH THE LOCAL VARIABLES
+    route [ [ #single name ] [ #single configuration ]
+
+        @ get the path of the source and outputfile
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:logic ]
+        #set            [ #data source_file ] [ #last ]
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:program ]
+        #set            [ #data output_file ] [ #last ]
+
+        @ make sure that the source file exists
+        #if             [ #data #not_file_present ] [ #scope:source_file ]
+        #error          [ #data "file to be routed was not found, try running build first" ]
+        #end
+
+        @ invoke entleman to route
+        #call           [ #function:#print:build ] [ #data "routing..." ]
+        #list           [ #data "entleman" ] [ #scope:source_file ] [ #data "-o" ] [ #scope:output_file ]
+        #if             [ #data #true ] [ #scope:configuration:symbols ]
+        #append         [ #last ] [ #data "-S" ]
+        #end
+        #call           [ #function:invoke_compiler ] [ #scope:configuration:debug ] [ #last ]
+
+        @ terminate compilation if routing failed
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to route" ]
         #end            [ #data #always ]
-    ]
-
-    rebuild [
-        #call           [ #function:clean ]
-        #call           [ #function:build ]
     ]
 
     #print {
