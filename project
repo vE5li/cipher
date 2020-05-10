@@ -54,10 +54,10 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
     process_arguments [ [ #single arguments ]
 
         @ create configuration and index
-        #set            [ #data configuration ] [ #data { debug !false symbols !false source "source/" output "output/" libraries [ ] } ]
+        #modify         [ #data #scope:configuration ] [ #data { debug !false symbols !false source "source/" output "output/" libraries [ ] } ]
         #length         [ #scope:arguments ]
-        #set            [ #data count ] [ #last ]
-        #set            [ #data index ] [ #data 1 ]
+        #modify         [ #data #scope:count ] [ #last ]
+        #modify         [ #data #scope:index ] [ #data 1 ]
 
         @ iterate over all arguments and match
         #while          [ #data #not_bigger ] [ #scope:index ] [ #scope:count ]
@@ -67,9 +67,9 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #if             [ #data #equals ] [ #last ] [ #data "-o" ]
         #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected output directory" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data output_set ] [ #data "output directory may only be spceified once" ]
-        #set            [ #data output_set ] [ #data !true ]
+        #modify         [ #data #scope:output_set ] [ #data !true ]
         #add            [ #scope:index ] [ #data 1 ]
-        #set            [ #data index ] [ #last ]
+        #modify         [ #data #scope:index ] [ #last ]
         #index          [ #scope:arguments ] [ #scope:index ]
         #call           [ #function:append_seperator ] [ #last ] [ #data '/' ]
         #modify         [ #data #scope:configuration:output ] [ #last ]
@@ -78,9 +78,9 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #else           [ #data #equals ] [ #last ] [ #data "-s" ]
         #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected source directory" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data source_set ] [ #data "source directory may only be spceified once" ]
-        #set            [ #data source_set ] [ #data !true ]
+        #modify         [ #data #scope:source_set ] [ #data !true ]
         #add            [ #scope:index ] [ #data 1 ]
-        #set            [ #data index ] [ #last ]
+        #modify         [ #data #scope:index ] [ #last ]
         #index          [ #scope:arguments ] [ #scope:index ]
         #call           [ #function:append_seperator ] [ #last ] [ #data '/' ]
         #modify         [ #data #scope:configuration:source ] [ #last ]
@@ -89,7 +89,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #else           [ #data #equals ] [ #last ] [ #data "-l" ]
         #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected library" ]
         #add            [ #scope:index ] [ #data 1 ]
-        #set            [ #data index ] [ #last ]
+        #modify         [ #data #scope:index ] [ #last ]
         #index          [ #scope:arguments ] [ #scope:index ]
         #ensure         [ #data #not_contains ] [ #scope:configuration:libraries ] [ #last ] [ #data "library " ] [ #last ] [ #data " may only be included once" ]
         #append         [ #scope:configuration:libraries ] [ #last ]
@@ -98,13 +98,13 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         @ dump symbols
         #else           [ #data #equals ] [ #last ] [ #data "-S" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data symbols_set ] [ #data "symbols flag may only be set once" ]
-        #set            [ #data symbols_set ] [ #data !true ]
+        #modify         [ #data #scope:symbols_set ] [ #data !true ]
         #modify         [ #data #scope:configuration:symbols ] [ #data !true ]
 
         @ enable debug
         #else           [ #data #equals ] [ #last ] [ #data "-d" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data debug_set ] [ #data "debug flag may only be set once" ]
-        #set            [ #data debug_set ] [ #data !true ]
+        #modify         [ #data #scope:debug_set ] [ #data !true ]
         #modify         [ #data #scope:configuration:debug ] [ #data !true ]
 
         @ add source file
@@ -115,7 +115,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ increment argument index
         #add            [ #scope:index ] [ #data 1 ]
-        #set            [ #data index ] [ #last ]
+        #modify         [ #data #scope:index ] [ #last ]
 
         @ return configuration
         #end
@@ -141,7 +141,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #else
         #string         [ #scope:arguments:1 ] [ #data "/source/main.cip" ]
         #end
-        #set            [ #data path ] [ #last ]
+        #modify         [ #data #scope:path ] [ #last ]
 
         @ load the file library
         #string         [ #root:directory:utility ] [ #data "file" ]
@@ -164,11 +164,11 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ take initial time passed
         #time
-        #set            [ #data start_time ] [ #last ]
+        #modify         [ #data #scope:start_time ] [ #last ]
 
         @ process command line arguments
         #call           [ #function:process_arguments ] [ #scope:arguments ]
-        #set            [ #data configuration ] [ #last ]
+        #modify         [ #data #scope:configuration ] [ #last ]
 
         @ load libraries
         #call           [ #function:#print:setup ] [ #data "loading libraries..." ]
@@ -217,7 +217,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         @ load the file settings and the pipeline
         #call           [ #function:#print:build ] [ #data "loading language..." ]
         #map            [ #data #file_settings ] [ #root:file_settings ] [ #data #pipeline ] [ #root:pipeline ] [ #data module_scope ] [ #data [ ] ]
-        #set            [ #data compiler ] [ #last ]
+        #modify         [ #data #scope:compiler ] [ #last ]
 
         @ load compiler libraries
         #iterate        [ #root:dependencies ]
@@ -265,7 +265,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         @#call           [ #function:load_cache ] [ #scope:name ] [ #scope:name ]
         #call           [ #function:load_compiler ]
         #compile_module [ #last ] [ #data main ] [ #scope:configuration:source ]
-        #set            [ #data main ] [ #last ]
+        #modify         [ #data #scope:main ] [ #last ]
         @#call           [ #function:save_cache ] [ #scope:name ] [ #scope:name ]
         #return         [ #scope:main ]
     ]
@@ -274,7 +274,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ compile the main module and save the cache
         #call           [ #function:verify ] [ #scope:name ] [ #scope:configuration ]
-        #set            [ #data main ] [ #last ]
+        #modify         [ #data #scope:main ] [ #last ]
 
         @ output the generated assembly code and assemble and rout it
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data "." ] [ #root:extention:assembly ]
@@ -300,9 +300,9 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ get the path of the source and outputfile
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:assembly ]
-        #set            [ #data source_file ] [ #last ]
+        #modify         [ #data #scope:source_file ] [ #last ]
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:logic ]
-        #set            [ #data output_file ] [ #last ]
+        #modify         [ #data #scope:output_file ] [ #last ]
 
         @ make sure that the source file exists
         #if             [ #data #not_file_present ] [ #scope:source_file ]
@@ -324,9 +324,9 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ get the path of the source and outputfile
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:logic ]
-        #set            [ #data source_file ] [ #last ]
+        #modify         [ #data #scope:source_file ] [ #last ]
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:program ]
-        #set            [ #data output_file ] [ #last ]
+        #modify         [ #data #scope:output_file ] [ #last ]
 
         @ make sure that the source file exists
         #if             [ #data #not_file_present ] [ #scope:source_file ]

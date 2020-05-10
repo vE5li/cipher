@@ -9,7 +9,7 @@
 
         module [ [ #single self ] [ #single public [ boolean ] ]
             #compile_module [ #root ] [ #scope:self:name ]
-            #set            [ #data data ] [ #last ]
+            #modify         [ #data #scope:data ] [ #last ]
             #return         [ #scope:self ]
         ]
     }
