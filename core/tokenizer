@@ -1,7 +1,7 @@
 #verify {
-    #variant            !true
-    #builder            !true
-    #pipeline           !true
+    #variant            $true
+    #builder            $true
+    #pipeline           $true
 }
 
 #comment_tokenizer {

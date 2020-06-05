@@ -54,7 +54,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
     process_arguments [ [ #single arguments ]
 
         @ create configuration and index
-        #modify         [ #data #scope:configuration ] [ #data { debug !false symbols !false source "source/" output "output/" libraries [ ] } ]
+        #modify         [ #data #scope:configuration ] [ #data { debug $false symbols $false source "source/" output "output/" libraries [ ] } ]
         #length         [ #scope:arguments ]
         #modify         [ #data #scope:count ] [ #last ]
         #modify         [ #data #scope:index ] [ #data 1 ]
@@ -67,7 +67,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #if             [ #data #equals ] [ #last ] [ #data "-o" ]
         #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected output directory" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data output_set ] [ #data "output directory may only be spceified once" ]
-        #modify         [ #data #scope:output_set ] [ #data !true ]
+        #modify         [ #data #scope:output_set ] [ #data $true ]
         #add            [ #scope:index ] [ #data 1 ]
         #modify         [ #data #scope:index ] [ #last ]
         #index          [ #scope:arguments ] [ #scope:index ]
@@ -78,7 +78,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #else           [ #data #equals ] [ #last ] [ #data "-s" ]
         #ensure         [ #data #bigger ] [ #scope:count ] [ #scope:index ] [ #data "expected source directory" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data source_set ] [ #data "source directory may only be spceified once" ]
-        #modify         [ #data #scope:source_set ] [ #data !true ]
+        #modify         [ #data #scope:source_set ] [ #data $true ]
         #add            [ #scope:index ] [ #data 1 ]
         #modify         [ #data #scope:index ] [ #last ]
         #index          [ #scope:arguments ] [ #scope:index ]
@@ -98,14 +98,14 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         @ dump symbols
         #else           [ #data #equals ] [ #last ] [ #data "-S" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data symbols_set ] [ #data "symbols flag may only be set once" ]
-        #modify         [ #data #scope:symbols_set ] [ #data !true ]
-        #modify         [ #data #scope:configuration:symbols ] [ #data !true ]
+        #modify         [ #data #scope:symbols_set ] [ #data $true ]
+        #modify         [ #data #scope:configuration:symbols ] [ #data $true ]
 
         @ enable debug
         #else           [ #data #equals ] [ #last ] [ #data "-d" ]
         #ensure         [ #data #not_present ] [ #scope ] [ #data debug_set ] [ #data "debug flag may only be set once" ]
-        #modify         [ #data #scope:debug_set ] [ #data !true ]
-        #modify         [ #data #scope:configuration:debug ] [ #data !true ]
+        #modify         [ #data #scope:debug_set ] [ #data $true ]
+        #modify         [ #data #scope:configuration:debug ] [ #data $true ]
 
         @ add source file
         #else

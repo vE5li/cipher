@@ -1,14 +1,14 @@
 #template {
 
     immediate [
-        [ [ #keyword  [ false    ] ]                           [ #data      boolean   !false ] ]
-        [ [ #keyword  [ true     ] ]                           [ #data      boolean   !true  ] ]
+        [ [ #keyword  [ false    ] ]                           [ #data      boolean   $false ] ]
+        [ [ #keyword  [ true     ] ]                           [ #data      boolean   $true  ] ]
         [                                                      [ #character character        ] ]
         [                                                      [ #string    string           ] ]
-        [ [ #operator [ subtract ] ] [ #data negative !true  ] [ #integer   integer          ] ]
-        [                            [ #data negative !false ] [ #integer   integer          ] ]
-        [ [ #operator [ subtract ] ] [ #data negative !true  ] [ #float     float            ] ]
-        [                            [ #data negative !false ] [ #float     float            ] ]
+        [ [ #operator [ subtract ] ] [ #data negative $true  ] [ #integer   integer          ] ]
+        [                            [ #data negative $false ] [ #integer   integer          ] ]
+        [ [ #operator [ subtract ] ] [ #data negative $true  ] [ #float     float            ] ]
+        [                            [ #data negative $false ] [ #float     float            ] ]
     ]
 
     operator [
@@ -78,7 +78,7 @@
     ]
 
     function_appearance [ @ { resolve [ resolve:function_appearance ] }
-        [ [ #merge [ function_start ] ] [ #operator [ case ] ] [ #keyword              [ not  ] ] [ #data returns !false ] ]
+        [ [ #merge [ function_start ] ] [ #operator [ case ] ] [ #keyword              [ not  ] ] [ #data returns $false ] ]
         [ [ #merge [ function_start ] ] [ #operator [ case ] ] [ #template return_type [ type ] ]                          ]
         [ [ #merge [ function_start ] ]                                                                                    ]
     ]
@@ -103,8 +103,8 @@
     ]
 
     field [
-        [ [ #keyword [ public ] ] [ #data public !true  ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
-        [                         [ #data public !false ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
+        [ [ #keyword [ public ] ] [ #data public $true  ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
+        [                         [ #data public $false ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
     ]
 
     field_list [
@@ -133,8 +133,8 @@
     ]
 
     implementable [ @macro
-        [ [ #keyword [ public ] ] [ #data public !true  ] [ #template [ assign ] ] ]
-        [                         [ #data public !false ] [ #template [ assign ] ] ]
+        [ [ #keyword [ public ] ] [ #data public $true  ] [ #template [ assign ] ] ]
+        [                         [ #data public $false ] [ #template [ assign ] ] ]
     ]
 
     while [
@@ -216,12 +216,12 @@
     ]
 
     range [
-        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ] [ #template end [ instance ] ] ]
-        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ] [ #template end [ instance ] ] ]
-        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ]                                ]
-        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive !true  ]                                ]
-        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ]                       [ #data inclusive !false ] [ #template end [ instance ] ] ]
-        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ]                       [ #data inclusive !false ] [ #template end [ instance ] ] ]
+        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive $true  ] [ #template end [ instance ] ] ]
+        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive $true  ] [ #template end [ instance ] ] ]
+        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive $true  ]                                ]
+        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ] [ #operator [ dot ] ] [ #data inclusive $true  ]                                ]
+        [ [ #template start [ instance ] ] [ #operator [ dot ] ] [ #operator [ dot ] ]                       [ #data inclusive $false ] [ #template end [ instance ] ] ]
+        [                                  [ #operator [ dot ] ] [ #operator [ dot ] ]                       [ #data inclusive $false ] [ #template end [ instance ] ] ]
     ]
 
     module [ { resolve [ resolve:module ] }
@@ -346,8 +346,8 @@
     ]
 
     public [
-        [ [ #keyword [ public ] ] [ #data public !true  ] ]
-        [                         [ #data public !false ] ]
+        [ [ #keyword [ public ] ] [ #data public $true  ] ]
+        [                         [ #data public $false ] ]
     ]
 
     block [ { resolve [ resolve:block ] } @macro
