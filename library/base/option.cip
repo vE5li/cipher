@@ -8,17 +8,11 @@ public enumeration Option<T> {
 implement<T> Option<T> {
 
     public label is_some: Function($self) -> Boolean := {
-        match $self {
-            case Some -> return true
-            case None -> return false
-        }
+        return case Some == $self
     }
 
     public label is_none: Function($self) -> Boolean := {
-        match $self {
-            case Some -> return false
-            case None -> return true
-        }
+        return case None == $self
     }
 
     public label some: Function($self, function: Function(item: $T)) := {

@@ -54,7 +54,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
     process_arguments [ [ #single arguments ]
 
         @ create configuration and index
-        #modify         [ #data #scope:configuration ] [ #data { debug $false symbols $false source "source/" output "output/" libraries [ ] } ]
+        #modify         [ #data #scope:configuration ] [ #data { debug $false symbols $false lucky $false source "source/" output "output/" libraries [ ] } ]
         #length         [ #scope:arguments ]
         #modify         [ #data #scope:count ] [ #last ]
         #modify         [ #data #scope:index ] [ #data 1 ]
@@ -100,6 +100,12 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #ensure         [ #data #not_present ] [ #scope ] [ #data symbols_set ] [ #data "symbols flag may only be set once" ]
         #modify         [ #data #scope:symbols_set ] [ #data $true ]
         #modify         [ #data #scope:configuration:symbols ] [ #data $true ]
+
+        @ lucky
+        #else           [ #data #equals ] [ #last ] [ #data "-L" ]
+        #ensure         [ #data #not_present ] [ #scope ] [ #data lucky_set ] [ #data "lucky flag may only be set once" ]
+        #modify         [ #data #scope:lucky_set ] [ #data $true ]
+        #modify         [ #data #scope:configuration:lucky ] [ #data $true ]
 
         @ enable debug
         #else           [ #data #equals ] [ #last ] [ #data "-d" ]
@@ -173,7 +179,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         @ load libraries
         #call           [ #function:#print:setup ] [ #data "loading libraries..." ]
         #iterate        [ #root:dependencies ]
-        #string         [ #root:directory:utility ] [ #last:instance ]
+        #string         [ #root:directory:utility ] [ #last:instance ] [ #data ".data" ]
         #read_map       [ #last ]
         #merge          [ #root ] [ #last ]
         #modify         [ #data #root ] [ #last ]
@@ -190,6 +196,14 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #else           [ #data #always ]
         #call           [ #function:#print:error ] [ #data "compiler has no function called " ] [ #scope:function ]
         #end            [ #data #always ]
+
+        @ lucky
+        #if             [ #data #true ] [ #scope:configuration:lucky ]
+        #length         [ #root:lucky ]
+        #random         [ #data 1 ] [ #last ]
+        #index          [ #root:lucky ] [ #last ]
+        #call           [ #function:#print:color ] [ #root:#color:magenta ] [ #data "lucky" ] [ #last ]
+        #end
 
         @ print out the elapsed time in seconds
         #time
@@ -221,7 +235,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ load compiler libraries
         #iterate        [ #root:dependencies ]
-        #string         [ #root:directory:utility ] [ #last:instance ]
+        #string         [ #root:directory:utility ] [ #last:instance ] [ #data ".data" ]
         #read_map       [ #last ]
         #merge          [ #scope:compiler ] [ #last ]
         #modify         [ #data #scope:compiler ] [ #last ]
@@ -229,7 +243,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ load compiler core
         #iterate        [ #root:core ]
-        #string         [ #root:directory:core ] [ #last:instance ]
+        #string         [ #root:directory:core ] [ #last:instance ] [ #data ".data" ]
         #read_map       [ #last ]
         #merge          [ #scope:compiler ] [ #last ]
         #modify         [ #data #scope:compiler ] [ #last ]
@@ -237,7 +251,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
         @ load passes
         #iterate        [ #root:pipeline ]
-        #string         [ #root:directory:pass ] [ #last:instance ]
+        #string         [ #root:directory:pass ] [ #last:instance ] [ #data ".data" ]
         #read_map       [ #last ]
         #merge          [ #scope:compiler ] [ #last ]
         #modify         [ #data #scope:compiler ] [ #last ]
@@ -368,3 +382,9 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         ]
     }
 }
+
+lucky [
+    "it finally compiled, huh?"
+    "not all sticks are turtles but all turtles are sticks"
+    "<3"
+]

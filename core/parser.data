@@ -146,13 +146,13 @@
     ]
 
     if [
-        [ [ #keyword [ if ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ] [ #list [ #template [ or ] ] ] ]
-        [ [ #keyword [ if ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ]                                ]
+        [ [ #keyword [ if ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ] [ #list [ #template [ else ] ] ] ]
+        [ [ #keyword [ if ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ]                                  ]
     ]
 
-    or [
-        [ [ #keyword [ or ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ] ]
-        [ [ #keyword [ or ] ]                                                                                           [ #template scope [ scope ] ] ]
+    else [
+        [ [ #keyword [ else ] ] [ #list conditions [ #template [ condition_piece ] ] [ #template [ logical_operator ] ] ] [ #template scope [ scope ] ] ]
+        [ [ #keyword [ else ] ]                                                                                           [ #template scope [ scope ] ] ]
     ]
 
     @ TODO tuples + reverse iterate

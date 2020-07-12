@@ -71,6 +71,8 @@
     #translate {
         "=="            identical
         "!="            differ
+        ">="            grater_equal
+        "<="            smaller_equal
         ":="            assign
         "+="            add_assign
         "-="            subtract_assign
@@ -79,6 +81,7 @@
         "&="            and_assign
         "|="            or_assign
         "^="            xor_assign
+        "%="            modulo_assign
         '>'             bigger
         '<'             smaller
         '+'             add
@@ -93,7 +96,7 @@
         "||"            logical_or
         "&&"            logical_and
         '^'             xor
-        '%'             modulus
+        '%'             modulo
         "::"            contains
         "->"            case
         '?'             macro
@@ -124,7 +127,7 @@
         iterate         iterate
         collect         collect
         if              if
-        or              or
+        else            else
         module          module
         namespace       namespace
         import          import
