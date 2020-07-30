@@ -2,7 +2,7 @@ core            [ tokenizer parser builder ]
 
 dependencies    [ string color format debug file ]
 
-pipeline        [ resolve @@ optimize generate @@ ]
+pipeline        [ register resolve inline generate ]
 
 project {
     name            "h0vs"
@@ -18,15 +18,14 @@ directory {
 }
 
 extention {
+    cipher          "cip"
     assembly        "asm"
     logic           "uni"
     program         "prg"
     cache           "che"
-}
-
-file_settings {
-    #extention      "cip"
-    #submodule      "module"
+    llvm_ir         "ll"
+    llvm_object     "elf"
+    llvm_binary     "out"
 }
 
 user_functions {
@@ -34,8 +33,6 @@ user_functions {
     "build"         #function:build
     "rebuild"       #function:rebuild
     "clean"         #function:clean
-    "assemble"      #function:assemble
-    "route"         #function:route
 }
 
 new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n    print_line?(\"hello, world!\")\n    return 0\n}\n"
@@ -54,7 +51,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
     process_arguments [ [ #single arguments ]
 
         @ create configuration and index
-        #modify         [ #data #scope:configuration ] [ #data { debug $false symbols $false lucky $false source "source/" output "output/" libraries [ ] } ]
+        #modify         [ #data #scope:configuration ] [ #data { debug $false symbols $false llvm $false lucky $false source "source/" output "output/" libraries [ ] } ]
         #length         [ #scope:arguments ]
         #modify         [ #data #scope:count ] [ #last ]
         #modify         [ #data #scope:index ] [ #data 1 ]
@@ -112,6 +109,12 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #ensure         [ #data #not_present ] [ #scope ] [ #data debug_set ] [ #data "debug flag may only be set once" ]
         #modify         [ #data #scope:debug_set ] [ #data $true ]
         #modify         [ #data #scope:configuration:debug ] [ #data $true ]
+
+        @ enable llvm backend
+        #else           [ #data #equals ] [ #last ] [ #data "-llvm" ]
+        #ensure         [ #data #not_present ] [ #scope ] [ #data llvm_set ] [ #data "llvm flag may only be set once" ]
+        #modify         [ #data #scope:llvm_set ] [ #data $true ]
+        #modify         [ #data #scope:configuration:llvm ] [ #data $true ]
 
         @ add source file
         #else
@@ -226,11 +229,11 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #write_map      [ #last ] [ #root:#cache ]
     ]
 
-    load_compiler [
+    load_compiler [ [ #single configuration ]
 
         @ load the file settings and the pipeline
         #call           [ #function:#print:build ] [ #data "loading language..." ]
-        #map            [ #data #file_settings ] [ #root:file_settings ] [ #data #pipeline ] [ #root:pipeline ] [ #data module_scope ] [ #data [ ] ]
+        #map            [ #data #pipeline ] [ #root:pipeline ] [ #data module_scope ] [ #data [ ] ] [ #data debug ] [ #scope:configuration:debug ]
         #modify         [ #data #scope:compiler ] [ #last ]
 
         @ load compiler libraries
@@ -277,9 +280,23 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 
     verify [ [ #single name ] [ #single configuration ]
         @#call           [ #function:load_cache ] [ #scope:name ] [ #scope:name ]
-        #call           [ #function:load_compiler ]
-        #compile_module [ #last ] [ #data main ] [ #scope:configuration:source ]
+        #call           [ #function:load_compiler ] [ #scope:configuration ]
+        #modify         [ #data #scope:compiler ] [ #last ]
+
+        #string         [ #scope:configuration:source ] [ #data "main." ] [ #root:extention:cipher ]
+        #modify         [ #data #scope:source_file ] [ #last ]
+
+        #read_file      [ #scope:source_file ]
+        #tokenize       [ #scope:compiler ] [ #last ] [ #scope:source_file ] [ #data $false ]
+        #merge          [ #scope ] [ #last ]
+        #modify         [ #data #scope ] [ #last ]
+
+        #parse          [ #scope:compiler ] [ #scope:token_stream ] [ #scope:registry ]
+        #modify         [ #data #scope:top ] [ #last ]
+
+        #build          [ #scope:compiler ] [ #scope:top ]
         #modify         [ #data #scope:main ] [ #last ]
+
         @#call           [ #function:save_cache ] [ #scope:name ] [ #scope:name ]
         #return         [ #scope:main ]
     ]
@@ -290,13 +307,25 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #call           [ #function:verify ] [ #scope:name ] [ #scope:configuration ]
         #modify         [ #data #scope:main ] [ #last ]
 
+        @ output the generated llvm code, optimize and assemble it
+        #if             [ #data #true ] [ #scope:configuration:llvm ]
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data "." ] [ #root:extention:llvm_ir ]
+        #call           [ #function:#file:write_create ] [ #last ] [ #scope:main:code ]
+
+        #call           [ #function:#format:serialize ] [ #scope:main ]
+        #print_line     [ #last ]
+
+        #call           [ #function:compile_llvm ] [ #scope:name ] [ #scope:configuration ]
+        #call           [ #function:assemble_llvm ] [ #scope:name ] [ #scope:configuration ]
+
         @ output the generated assembly code and assemble and rout it
+        #else
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data "." ] [ #root:extention:assembly ]
         #system         [ #data "cp" ] [ #data "example/main.asm" ] [ #last ]
-        @#call           [ #function:#file:write_create ] [ #last ] [ #data "code" ]
         @#call           [ #function:#file:write_create ] [ #last ] [ #scope:main:code ]
         #call           [ #function:assemble ] [ #scope:name ] [ #scope:configuration ]
         #call           [ #function:route ] [ #scope:name ] [ #scope:configuration ]
+        #end
     ]
 
     rebuild [ [ #single name ] [ #single configuration ]
@@ -318,11 +347,6 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:logic ]
         #modify         [ #data #scope:output_file ] [ #last ]
 
-        @ make sure that the source file exists
-        #if             [ #data #not_file_present ] [ #scope:source_file ]
-        #error          [ #data "file to be assembled was not found, try running build first" ]
-        #end
-
         @ invoke doofenshmirtz to assemble
         #call           [ #function:#print:build ] [ #data "assembling..." ]
         #list           [ #data "doofenshmirtz" ] [ #scope:source_file ] [ #data "-o" ] [ #scope:output_file ]
@@ -342,11 +366,6 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:program ]
         #modify         [ #data #scope:output_file ] [ #last ]
 
-        @ make sure that the source file exists
-        #if             [ #data #not_file_present ] [ #scope:source_file ]
-        #error          [ #data "file to be routed was not found, try running build first" ]
-        #end
-
         @ invoke entleman to route
         #call           [ #function:#print:build ] [ #data "routing..." ]
         #list           [ #data "entleman" ] [ #scope:source_file ] [ #data "-o" ] [ #scope:output_file ]
@@ -358,6 +377,42 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         @ terminate compilation if routing failed
         #if             [ #data #false ] [ #last ]
         #error          [ #data "failed to route" ]
+        #end            [ #data #always ]
+    ]
+
+    compile_llvm [ [ #single name ] [ #single configuration ]
+
+        @ get the path of the source and outputfile
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:llvm_ir ]
+        #modify         [ #data #scope:source_file ] [ #last ]
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:llvm_object ]
+        #modify         [ #data #scope:output_file ] [ #last ]
+
+        @ invoke lcc to compile
+        #call           [ #function:#print:build ] [ #data "compiling llvm code..." ]
+        #silent         [ #data "llc" ] [ #scope:source_file ] [ #data "-o" ] [ #scope:output_file ] [ #data "-filetype=obj" ]
+
+        @ terminate compilation if routing failed
+        #if             [ #data #false ] [ #last ]
+        #error          [ #data "failed to compile llvm ir" ]
+        #end            [ #data #always ]
+    ]
+
+    assemble_llvm [ [ #single name ] [ #single configuration ]
+
+        @ get the path of the source and outputfile
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:llvm_object ]
+        #modify         [ #data #scope:input_file ] [ #last ]
+        #string         [ #scope:configuration:output ] [ #scope:name ] [ #data '.' ] [ #root:extention:llvm_binary ]
+        #modify         [ #data #scope:output_file ] [ #last ]
+
+        @ invoke gcc to compile
+        #call           [ #function:#print:build ] [ #data "assembling llvm code..." ]
+        #silent         [ #data "gcc" ] [ #scope:input_file ] [ #data "-o" ] [ #scope:output_file ] [ #data "-no-pie" ]
+
+        @ terminate compilation if routing failed
+        #if             [ #data #false ] [ #last ]
+        #error          [ #data "failed to compile llvm assembly" ]
         #end            [ #data #always ]
     ]
 
@@ -386,5 +441,4 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
 lucky [
     "it finally compiled, huh?"
     "not all sticks are turtles but all turtles are sticks"
-    "<3"
 ]

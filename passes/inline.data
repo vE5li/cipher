@@ -1,0 +1,19 @@
+#function {
+
+    inline {
+
+        top [ [ #single self ]
+
+            @ if debug is enabled, print the current pass
+            #if             [ #data #true ] [ #root:debug ]
+            #call           [ #function:print_pass ] [ #data "inline" ]
+            #end
+
+            @ if present, pass blocks and return self
+            #if             [ #data #present ] [ #scope:self ] [ #data blocks ]
+            #pass           [ #scope:self:blocks ] [ #data #build:root_scope ]
+            #end
+            #return         [ #scope:self ]
+        ]
+    }
+}

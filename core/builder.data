@@ -1,24 +1,20 @@
 #function {
 
-    #note [ [ #single flag [ identifier ] ] [ #single message [ string ] ]
-        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
-        #modify         [ #data #scope:module ] [ #last ]
-        #call           [ #function:#format:tag ] [ #root:#color:yellow ] [ #scope:flag ]
-        #print_line     [ #scope:module ] [ #data " " ] [ #last ] [ #data " " ] [ #scope:message ]
+    print_pass [ [ #single pass ]
+        #call           [ #function:#format:tag ] [ #root:#color:magenta ] [ #data "pass" ]
+        #call           [ #function:#print:debug ] [ #last ] [ #data " running " ] [ #scope:pass ]
     ]
 
-    #tokenize [
-        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
-        #print_line     [ #last ] [ #data " tokenizing..." ]
+    resolve_alias [ [ #single entry ]
+
+        @
+        #while          [ #data #present ] [ #scope:entry ] [ #data alias ]
+        #resolve        [ #scope:entry:alias ]
+        #modify         [ #data #scope:entry ] [ #last ]
+        #end
+
+        @
+        #return         [ #scope:entry ]
     ]
 
-    #parse [
-        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
-        #print_line     [ #last ] [ #data " parsing..." ]
-    ]
-
-    #build [
-        #call           [ #function:#format:tag ] [ #root:#color:blue ] [ #context:#parents:-1 ]
-        #print_line     [ #last ] [ #data " building..." ]
-    ]
 }

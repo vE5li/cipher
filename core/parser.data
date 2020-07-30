@@ -95,24 +95,24 @@
         [                                                                                                                  ]
     ]
 
-    real_type [ @{ resolve [ resolve:real_type ] }
+    real_type [ { resolve [ resolve:real_type ] }
         [ [ #template function    [ function_appearance ] ]                                                                                                                                       ]
         [ [ #operator             [ open_round          ] ]                                      [ #list     tuple [ #template [ type ] ] [ #operator [ comma ] ] ] [ #operator [ close_round ] ] ]
         [ [ #merge                [ redirection         ] ] [ #type_identifier type_identifier ] [ #merge          [ subtype_list                               ] ]                               ]
         [ [ #keyword  type        [ any                 ] ]                                      [ #merge          [ subtype_list                               ] ]                               ]
     ]
 
-    field [
-        [ [ #keyword [ public ] ] [ #data public $true  ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
-        [                         [ #data public $false ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
+    field [ @{ resolve [ resolve:field ] }
+        [ [ #keyword [ public ] ] [ #data public $true  ] [ #identifier name ] [ #operator [ colon ] ] [ #merge [ type ] ] ]
+        [                         [ #data public $false ] [ #identifier name ] [ #operator [ colon ] ] [ #merge [ type ] ] ]
     ]
 
     field_list [
-        [ [ #operator [ open_curly ] ] [ #list field [ #template [ field ] ] ] [ #operator [ close_curly ] ] ]
-        [ [ #operator [ open_curly ] ]                                         [ #operator [ close_curly ] ] ]
+        [ [ #operator [ open_curly ] ] [ #list fields [ #template [ field ] ] ] [ #operator [ close_curly ] ] ]
+        [ [ #operator [ open_curly ] ]                                          [ #operator [ close_curly ] ] ]
     ]
 
-    structure [ @ { resolve [ resolve:structure ] } @macro
+    structure [ { register [ register:structure ] resolve [ resolve:structure ] }
         [ [ #keyword [ structure ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ assign     ] ] [ #template type [ real_type ] ] ]
         [ [ #keyword [ structure ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #merge    [ field_list ] ]                                  ]
     ]
@@ -182,14 +182,14 @@
         [ [ #template [ implement_selector ] ] [ #merge [ template_list ] ] [ #merge [ implement_list ] ] ]
     ]
 
-    alias [
+    alias [ { register [ register:alias ] resolve [ resolve:alias ] }
         [ [ #keyword [ alias ] ] [ #type_identifier alias ] [ #merge [ template_list ] ] [ #operator [ assign ] ] [ #template type [ real_type ] ] ]
     ]
 
-    type [ @[ resolve:type ]
-        [ [ #operator [ and   ] ] [ #data instance_type [ mirror ] ] [ #template real_type [ real_type ] ] ]
-        [ [ #operator [ image ] ] [ #data instance_type [ image  ] ] [ #template real_type [ real_type ] ] ]
-        [                         [ #data instance_type [ real   ] ] [ #template real_type [ real_type ] ] ]
+    type [
+        [ [ #operator [ and   ] ] [ #data instance_type mirror ] [ #template real_type [ real_type ] ] ]
+        [ [ #operator [ image ] ] [ #data instance_type image  ] [ #template real_type [ real_type ] ] ]
+        [                         [ #data instance_type real   ] [ #template real_type [ real_type ] ] ]
     ]
 
     subtype_list [
@@ -203,15 +203,15 @@
     ]
 
     label [
-        [ [ #keyword [ label ] ] [ #identifier name ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
-        [ [ #keyword [ label ] ] [ #identifier name ]                                                     ]
+        [ [ #keyword [ label ] ] [ #identifier label ] [ #operator [ colon ] ] [ #template type [ type ] ] ]
+        [ [ #keyword [ label ] ] [ #identifier label ]                                                     ]
     ]
 
-    assign [ @[ resolve:assign ]
-        [ [ #template [ label ] ] [ #operator [ assign ] ] [ #template instance [ instance ] ] ]
+    assign [ { register [ register:assign ] }
+        [ [ #merge [ label ] ] [ #operator [ assign ] ] [ #template instance [ instance ] ] ]
     ]
 
-    reassign [@ [ resolve:assign ]
+    reassign [
         [ [ #template destination [ instance ] ] [ #template [ reassignment_operator ] ] [ #template instance [ instance ] ] ]
     ]
 
@@ -264,7 +264,7 @@
         [ [ #merge [ redirection ] ] [ #type_identifier type_identifier ]                                                                                                                               ]
     ]
 
-    instance [ @ { resolve [ resolve:instance ] } @macro
+    instance [
         [ [ #template   collection  [ instance                    ] ] [ #operator              [ open_square                                    ] ] [ #template   range [ range       ] ] [ #operator [ close_square ] ] ]
         [ [ #template   collection  [ instance                    ] ] [ #operator              [ open_square                                    ] ] [ #template   index [ instance    ] ] [ #operator [ close_square ] ] ]
         [ [ #operator               [ open_round                  ] ] [ #list       tuple      [ #template [ instance ] ] [ #operator [ comma ] ] ] [ #operator         [ close_round ] ]                                ]
@@ -350,7 +350,7 @@
         [                         [ #data public $false ] ]
     ]
 
-    block [ { resolve [ resolve:block ] } @macro
+    block [
         [ [ #merge [ public ] ] [ #template block [ assign      ] ] ]
         [ [ #merge [ public ] ] [ #template block [ alias       ] ] ]
         [ [ #merge [ public ] ] [ #template block [ structure   ] ] ]
@@ -364,7 +364,7 @@
         [                       [ #template block [ implement   ] ] ]
     ]
 
-    statement [ @macro
+    statement [
         [ [ #template statement [ assign    ] ] ]
         [ [ #template statement [ reassign  ] ] ]
         [ [ #template statement [ call      ] ] ]
@@ -384,7 +384,7 @@
         [ [ #template statement [ iterate   ] ] ]
     ]
 
-    namespace [ @{ resolve [ resolve:namespace ] }
+    namespace [
         [ [ #keyword [ namespace ] ] [ #identifier name ] [ #operator [ open_curly ] ] [ #list block [ #template [ block ] ] ] [ #operator [ close_curly ] ] ]
         [ [ #keyword [ namespace ] ] [ #identifier name ] [ #operator [ open_curly ] ]                                         [ #operator [ close_curly ] ] ]
     ]
@@ -409,13 +409,13 @@
         [ [ #keyword [ pass ] ] [ #template return [ instance ] ] ]
     ]
 
-    scope [ @macro
+    scope [
         [ [ #operator [ open_curly ] ] [ #list statement [ #template [ statement ] ] ] [ #operator [ close_curly ] ] ]
         [ [ #operator [ open_curly ] ]                                                 [ #operator [ close_curly ] ] ]
     ]
 
-    #top [ @{ resolve [ resolve:top ] generate [ generate:top ] }
-        [ [ #list block [ #template [ block ] ] ] ]
-        [                                         ]
+    #top [ { register [ register:top ] resolve [ resolve:top ] optimize [ optimize:top ] generate [ generate:top ] }
+        [ [ #list blocks [ #template [ block ] ] ] ]
+        [                                          ]
     ]
 }

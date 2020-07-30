@@ -1,5 +1,9 @@
 #function {
 
     optimize {
+
+        top [ [ #single self ]
+            #return         [ #scope:self ]
+        ]
     }
 }

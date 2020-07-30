@@ -2,14 +2,45 @@
 
     resolve {
 
-        block [ [ #single self ]
-            #pass           [ #scope:self:block ] [ #scope:self:public ]
+        real_type [ [ #single self ] [ #single path ]
+
+            @
+            @#if             [ #data #present ] [ #scope:self:function ]
+            @#pass           [ #scope:self: ]
+
+            @
+            @#else
+            #path           [ #scope:path ] [ #data types ] [ #scope:self:type_identifier ]
+            #return         [ #last ]
+        ]
+
+        structure [ [ #single self ] [ #single path ]
+
+            #iterate        [ #scope:self:fields ]
+                #if             [ #data #not_present ] [ #last:instance:part ] [ #data alias ]
+                    #modify         [ #data #scope:field ] [ #last:instance:part ] [ #data #scope:index ] [ #last:selector ]
+                    #pass           [ #scope:field ] [ #scope:path ]
+                    #overwrite      [ #scope:self:fields ] [ #scope:index ] [ #last ]
+                    #modify         [ #data #scope:self:fields ] [ #last ]
+                #end
+            #end
+
+            @
             #return         [ #scope:self ]
         ]
 
-        module [ [ #single self ] [ #single public [ boolean ] ]
-            #compile_module [ #root ] [ #scope:self:name ]
-            #modify         [ #data #scope:data ] [ #last ]
+        top [ [ #single self ]
+
+            @ if debug is enabled, print the current pass
+            #if             [ #data #true ] [ #root:debug ]
+            #call           [ #function:print_pass ] [ #data "resolve" ]
+            #end
+
+            @
+            #pass           [ #build:root_scope ] [ #data #build:root_scope ]
+            #modify         [ #data #build:root_scope ] [ #last ]
+
+            @ return self
             #return         [ #scope:self ]
         ]
     }
