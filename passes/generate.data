@@ -125,11 +125,6 @@
             #call           [ #function:generate:level ] [ #build:root_scope ]
             #modify         [ #data #scope:mangled ] [ #last ]
 
-            #keys           [ #scope:mangled:types ]
-            #print_line     [ #last ]
-            #keys           [ #scope:mangled:labels ]
-            #print_line     [ #last ]
-
             @ generate llvm composite types
             #if             [ #data #true ] [ #root:debug ]
             #call           [ #function:#print:debug ] [ #data "generating llvm types" ]
