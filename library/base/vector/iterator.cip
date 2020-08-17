@@ -1,6 +1,6 @@
 import super::super::iterator::Iterator
 
-public structure VectorIterator<T> {
+public type VectorIterator<T> {
     vector: $Vector<T>
     index: Integer,
 }
@@ -28,7 +28,7 @@ implement<T> Iterator<T> for VectorIterator<T> {
     }
 }
 
-public structure MutableVectorIterator<T> {
+public type MutableVectorIterator<T> {
     vector: &Vector<T>
     index: Integer,
 }
@@ -56,7 +56,7 @@ implement<T> Iterator<T> for MutableVectorIterator<T> {
     }
 }
 
-public structure OwnedVectorIterator<T> {
+public type OwnedVectorIterator<T> {
     vector: &Vector<T>
     removed: Integer,
 }

@@ -113,8 +113,8 @@
     ]
 
     structure [ { register [ register:structure ] resolve [ resolve:structure ] }
-        [ [ #keyword [ structure ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ assign     ] ] [ #template type [ real_type ] ] ]
-        [ [ #keyword [ structure ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #merge    [ field_list ] ]                                  ]
+        [ [ #keyword [ type ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ assign     ] ] [ #template type [ real_type ] ] ]
+        [ [ #keyword [ type ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #merge    [ field_list ] ]                                  ]
     ]
 
     variant [
@@ -128,8 +128,8 @@
     ]
 
     enumeration [ @macro
-        [ [ #keyword [ enumeration ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ assign       ] ] [ #template type [ real_type ] ] ]
-        [ [ #keyword [ enumeration ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #merge    [ variant_list ] ]                                  ]
+        [ [ #keyword [ type ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #operator [ assign       ] ] [ #template type [ real_type ] ] ]
+        [ [ #keyword [ type ] ] [ #type_identifier name ] [ #merge [ template_list ] ] [ #merge    [ variant_list ] ]                                  ]
     ]
 
     implementable [ @macro

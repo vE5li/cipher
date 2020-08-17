@@ -13,7 +13,7 @@ public type StringIterator := VectorIterator<Character>
 
 public type MutableStringIterator := MutableVectorIterator<Character>
 
-public structure String {
+public type String {
     data: Vector<Character>
 }
 

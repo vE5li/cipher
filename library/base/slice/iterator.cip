@@ -1,6 +1,6 @@
 import super::super::iterator::Iterator
 
-public structure SliceIterator<T> {
+public type SliceIterator<T> {
     slice: $Slice<T>
     index: Integer,
 }
@@ -28,7 +28,7 @@ implement<T> Iterator<T> for SliceIterator<T> {
     }
 }
 
-public structure MutableSliceIterator<T> {
+public type MutableSliceIterator<T> {
     slice: &Slice<T>
     index: Integer,
 }
