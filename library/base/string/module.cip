@@ -95,10 +95,7 @@ implement Compare for String {
             }
         }
 
-        match self.length() == other.length() {
-            case true -> return Relation::Equal
-            case false -> return Relation::Smaller
-        }
+        return if?(self.length() == other.length(), Relation::Equal, Relation::Smaller)
     }
 }
 

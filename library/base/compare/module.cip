@@ -15,9 +15,6 @@ public trait Compare {
 implement Equal for Compare {
 
     public label is_equal: Function($self, other: $Self) -> Boolean {
-        match self.compare(other) {
-            case Relation::Equal -> return true
-            case any -> return false
-        }
+        return case Equal == self.compare(other)
     }
 }

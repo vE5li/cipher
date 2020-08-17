@@ -39,6 +39,13 @@ implement<T> Option<T> {
         }
     }
 
+    public label unpack: Function(self) -> T := {
+        match self {
+            case Some: item -> return item
+            case None -> panic?("unpack called on none")
+        }
+    }
+
     public label or: Function(self, other: T) -> Self := {
         match self {
             case Some: item -> return Some(item)

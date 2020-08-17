@@ -21,10 +21,11 @@ implement<T> Vector<T> {
     }
 
     public label is_empty: Function($self) -> Boolean {
-        match self.size {
-            case 0 -> return true
-            case any -> return false
-        }
+        return self.size == 0
+    }
+
+    public label is_filled: Function($self) -> Boolean {
+        return !self.is_empty()
     }
 
     public label length: Function($self) -> Integer := {
