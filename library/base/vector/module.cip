@@ -37,7 +37,7 @@ implement<T> Vector<T> {
     }
 
     public label push_back: Function(&self, item: T) := {
-        self.insert(self.length() - 1, item)
+        self.insert(self.length(), item)
     }
 
     public label pop: Function(&self) -> Option<T> := {
@@ -84,9 +84,9 @@ implement<T> Vector<T> {
     }
 
     public label retain: Function(&self, filter: Function($T) -> Boolean) := {
-        label index := mutable 0
+        label index := mutable 1
         loop {
-            if index >= self.length() {
+            if index > self.length() {
                 terminate
             }
 

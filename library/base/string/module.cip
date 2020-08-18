@@ -42,7 +42,7 @@ implement String {
     }
 
     public label push_character: Function(&self, character: Character) := {
-        self.insert_character(0, character)
+        self.insert_character(1, character)
     }
 
     public label push_character_back: Function(&self, character: Character) := {

@@ -8,7 +8,7 @@ public type VectorIterator<T> {
 implement<T> VectorIterator<T> {
 
     public label from: Function(vector: $Vector<T>) -> Self {
-        return implied?(vector, 0)
+        return implied?(vector, implied 1)
     }
 }
 
@@ -18,7 +18,7 @@ implement<T> Iterator<T> for VectorIterator<T> {
 
     public label next: Function(&self) -> Option<Type> := {
 
-        if self.index == self.vector.length {
+        if self.index > self.vector.length {
             return None
         }
 
@@ -36,7 +36,7 @@ public type MutableVectorIterator<T> {
 implement<T> MutableVectorIterator<T> {
 
     public label from: Function(vector: &Vector<T>) -> Self {
-        return implied?(vector, 0)
+        return implied?(vector, 1)
     }
 }
 
@@ -46,7 +46,7 @@ implement<T> Iterator<T> for MutableVectorIterator<T> {
 
     public label next: Function(&self) -> Option<Type> := {
 
-        if self.index == self.vector.length {
+        if self.index > self.vector.length {
             return None
         }
 
@@ -64,7 +64,7 @@ public type OwnedVectorIterator<T> {
 implement<T> OwnedVectorIterator<T> {
 
     public label from: Function(vector: &Vector<T>) -> Self {
-        return implied?(vector, 0)
+        return implied?(vector, implied 0)
     }
 }
 

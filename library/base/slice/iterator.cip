@@ -8,7 +8,7 @@ public type SliceIterator<T> {
 implement<T> SliceIterator<T> {
 
     public label from: Function(slice: $Slice<T>) -> Self {
-        return implied?(slice, 0)
+        return implied?(slice, implied 1)
     }
 }
 
@@ -18,7 +18,7 @@ implement<T> Iterator<T> for SliceIterator<T> {
 
     public label next: Function(&self) -> Option<Type> := {
 
-        if self.index == self.slice.length {
+        if self.index > self.slice.length {
             return None
         }
 
@@ -36,7 +36,7 @@ public type MutableSliceIterator<T> {
 implement<T> MutableSliceIterator<T> {
 
     public label from: Function(slice: &Slice<T>) -> Self {
-        return implied?(slice, 0)
+        return implied?(slice, implied 1)
     }
 }
 
@@ -46,7 +46,7 @@ implement<T> Iterator<T> for MutableSliceIterator<T> {
 
     public label next: Function(&self) -> Option<Type> := {
 
-        if self.index == self.slice.length {
+        if self.index > self.slice.length {
             return None
         }
 
