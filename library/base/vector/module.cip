@@ -85,11 +85,7 @@ implement<T> Vector<T> {
 
     public label retain: Function(&self, filter: Function($T) -> Boolean) := {
         label index := mutable 1
-        loop {
-            if index > self.length() {
-                terminate
-            }
-
+        while index <= self.length() {
             match filter($self[index]) {
                 case true -> index += 1
                 case false -> self.remove(index)
