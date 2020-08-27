@@ -14,10 +14,6 @@ public trait Iterator<T> {
 
 implement<T> Iterator<T> {
 
-    public label cloned: Function($self) -> Self := {
-        @ ...
-    }
-
     public label for_each: Function(&self, function: Function(item: Type)) := {
         while case Some: item == self.next() {
             function(raw?(item))
@@ -43,6 +39,13 @@ implement<T> Iterator<T> {
 
     public label collect<R: FromIterator>: Function(self) -> R {
         return R::from_iterator(self)
+    }
+}
+
+implement<T: Clone> Iterator<T> {
+
+    public label cloned: Function($self) -> Self := {
+        @ ...
     }
 }
 

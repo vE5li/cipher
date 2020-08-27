@@ -1,6 +1,6 @@
 import super::super::iterator::Iterator
 
-public type SliceIterator<T> {
+public structure SliceIterator<T> {
     slice: $Slice<T>
     index: Integer,
 }
@@ -14,7 +14,7 @@ implement<T> SliceIterator<T> {
 
 implement<T> Iterator<T> for SliceIterator<T> {
 
-    public type Type := $T
+    public alias Type := $T
 
     public label next: Function(&self) -> Option<Type> := {
 
@@ -28,7 +28,7 @@ implement<T> Iterator<T> for SliceIterator<T> {
     }
 }
 
-public type MutableSliceIterator<T> {
+public structure MutableSliceIterator<T> {
     slice: &Slice<T>
     index: Integer,
 }
@@ -42,7 +42,7 @@ implement<T> MutableSliceIterator<T> {
 
 implement<T> Iterator<T> for MutableSliceIterator<T> {
 
-    public type Type := &T
+    public alias Type := &T
 
     public label next: Function(&self) -> Option<Type> := {
 

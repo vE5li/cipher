@@ -140,7 +140,8 @@
         any             any
         implement       implement
         derive          derive
-        type            type
+        structure       structure
+        enumeration     enumeration
         not             not
         as              as
         for             for

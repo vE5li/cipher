@@ -8,7 +8,7 @@ import super::clone::Clone
 import super::compare::Equal
 import super::format::any
 
-public type Vector<T> {
+public structure Vector<T> {
     address: Pointer<T>
     capacity: Integer
     size: Integer

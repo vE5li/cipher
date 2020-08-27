@@ -1,6 +1,6 @@
 import super::super::iterator::Iterator
 
-public type VectorIterator<T> {
+public structure VectorIterator<T> {
     vector: $Vector<T>
     index: Integer,
 }
@@ -14,7 +14,7 @@ implement<T> VectorIterator<T> {
 
 implement<T> Iterator<T> for VectorIterator<T> {
 
-    public type Type := $T
+    public alias Type := $T
 
     public label next: Function(&self) -> Option<Type> := {
 
@@ -28,7 +28,7 @@ implement<T> Iterator<T> for VectorIterator<T> {
     }
 }
 
-public type MutableVectorIterator<T> {
+public structure MutableVectorIterator<T> {
     vector: &Vector<T>
     index: Integer,
 }
@@ -42,7 +42,7 @@ implement<T> MutableVectorIterator<T> {
 
 implement<T> Iterator<T> for MutableVectorIterator<T> {
 
-    public type Type := &T
+    public alias Type := &T
 
     public label next: Function(&self) -> Option<Type> := {
 
@@ -56,7 +56,7 @@ implement<T> Iterator<T> for MutableVectorIterator<T> {
     }
 }
 
-public type OwnedVectorIterator<T> {
+public structure OwnedVectorIterator<T> {
     vector: &Vector<T>
     removed: Integer,
 }
@@ -64,13 +64,13 @@ public type OwnedVectorIterator<T> {
 implement<T> OwnedVectorIterator<T> {
 
     public label from: Function(vector: &Vector<T>) -> Self {
-        return implied?(vector, implied 0)
+        return implied?(vector, implied 1)
     }
 }
 
 implement<T> Iterator<T> for OwnedVectorIterator<T> {
 
-    public type Type := T
+    public alias Type := T
 
     public label next: Function(&self) -> Option<Type> := {
 
