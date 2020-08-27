@@ -5,16 +5,16 @@ dependencies    [ string color format debug file ]
 pipeline        [ register resolve inline generate ]
 
 project {
-    name            "h0vs"
+    name            "cipher"
     author          "ve5li"
     contact         "ve5li@tuta.io"
 }
 
 directory {
-    core            "/usr/share/seamonkey/h0vs/core/"
-    pass            "/usr/share/seamonkey/h0vs/passes/"
-    library         "/usr/share/seamonkey/h0vs/library/"
-    utility         "/usr/share/seamonkey/qtc8/library/"
+    core            "/usr/share/kami/cipher/core/"
+    pass            "/usr/share/kami/cipher/passes/"
+    library         "/usr/share/kami/cipher/library/"
+    utility         "/usr/share/kami/shego/library/"
 }
 
 extention {
@@ -162,7 +162,7 @@ new_file "label main: Function(arguments: Vector<String>) -> Integer := {\n\n   
         #print_line     [ #data " -llvm      enable llvm backend" ]
         #print_line
         #print_line     [ #data "contact:" ]
-        #print_line     [ #data "  #         github.com/ve5li/h0vs" ]
+        #print_line     [ #data "  #         github.com/ve5li/cipher" ]
         #print_line     [ #data "  @         ve5li@tuta.io" ]
         #print_line
     ]
