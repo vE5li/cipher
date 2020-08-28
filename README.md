@@ -2,10 +2,10 @@
 Cipher is a compiler for a rust like language
 
 # build
-For building on linux, you can use the install script provided in [nt33](https://github.com/ve5li/nt33) to install the entire toolchain. Simply clone the repository and execute the installer as such:
+For building on linux, you can use the install script provided in [yardstick](https://github.com/ve5li/yardstick) to install the entire toolchain. Simply clone the repository and execute the installer as such:
 ```
-git clone https://github.com/ve5li/nt33
-cd nt33/untility
+git clone https://github.com/ve5li/yardstick
+cd yardstick/untility
 ./install.sh
 ```
 
