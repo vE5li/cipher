@@ -163,7 +163,7 @@ implement<T: Format> Format for Vector<T> {
     public label format: Function($self) -> String := {
         match self.is_empty() {
             case true -> return "[ ]"
-            case false -> return "[ " ~ self.iterator.for_each({ format?("{}", $item) }).join(", ") ~ " ]"
+            case false -> return format?("[ {} ]", self.iterator.for_each({ format?("{}", $item) }).join(", "))
         }
     }
 }
@@ -173,7 +173,7 @@ implement<T: Debug> Debug for Vector<T> {
     public label debug: Function($self) -> String := {
         match self.is_empty() {
             case true -> return "[ ]"
-            case false -> return "[ " ~ self.iterator.for_each({ format?("{debug}", $item) }).join(", ") ~ " ]"
+            case false -> return format?("[ {} ]", self.iterator.for_each({ format?("{debug}", $item) }).join(", "))
         }
     }
 }

@@ -91,7 +91,6 @@
         '|'             or
         '&'             and
         '!'             invert
-        '~'             concatinate
         "^^"            logical_xor
         "||"            logical_or
         "&&"            logical_and
@@ -113,7 +112,7 @@
         '.'             dot
     }
     #ignored        [ '\r' '\t' '\n' ' ' ]
-    #invalid        [ '\\' ';' '=' ]
+    #invalid        [ '\\' ';' '=' '~' ]
 }
 
 #keyword_tokenizer {
