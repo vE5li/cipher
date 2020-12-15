@@ -11,10 +11,10 @@ project {
 }
 
 directory {
-    core            "/usr/share/kami/cipher/core/"
-    pass            "/usr/share/kami/cipher/passes/"
-    library         "/usr/share/kami/cipher/library/"
-    utility         "/usr/share/kami/shego/library/"
+    core            "/usr/share/tortoise/cipher/core/"
+    pass            "/usr/share/tortoise/cipher/passes/"
+    library         "/usr/share/tortoise/cipher/library/"
+    utility         "/usr/share/tortoise/shego/library/"
 }
 
 extention {
