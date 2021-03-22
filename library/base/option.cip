@@ -5,6 +5,10 @@ public enumeration Option<T> {
     None
 }
 
+derive<T: Copy> Copy for Option<T>
+
+derive<T: Clone> Clone for Option<T>
+
 implement<T> Option<T> {
 
     public label is_some: Function($self) -> Boolean := {

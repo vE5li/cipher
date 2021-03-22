@@ -1,0 +1,24 @@
+import super::logical_operator::any;
+import super::operator::Invert;
+
+implement Boolean {
+
+    public label true: Function(self, function: Function()) := {
+        if self {
+            function()
+        }
+    }
+
+    public label false: Function(self, function: Function()) := {
+        if !self {
+            function()
+        }
+    }
+}
+
+implement Invert for Boolean {
+
+    public label invert: Function(self) -> Self := {
+        return if?(self, false, true)
+    }
+}

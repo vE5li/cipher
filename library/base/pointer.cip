@@ -1,0 +1,3 @@
+structure Pointer<T> {
+    address: Integer<64>
+}
